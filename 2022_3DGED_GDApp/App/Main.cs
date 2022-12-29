@@ -184,7 +184,7 @@ namespace GD.App
             InitializeNonCollidableContent(worldScale);
 
             //add the player
-            //InitializePlayer();
+            InitializePlayer();
 
             //add UI and menu
             InitializeUI();
@@ -611,7 +611,7 @@ namespace GD.App
 
             #endregion Curve
 
-            cameraManager.SetActiveCamera(AppData.FIRST_PERSON_CAMERA_NAME);
+            cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
         }
 
         private void InitializeCollidableContent(float worldScale)

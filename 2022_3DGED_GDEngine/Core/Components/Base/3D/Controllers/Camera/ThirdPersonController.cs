@@ -1,6 +1,7 @@
 ﻿using GD.Engine.Globals;
 using Microsoft.Xna.Framework;
 using System;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
 
 namespace GD.Engine
 {
@@ -22,7 +23,7 @@ namespace GD.Engine
             {
                 //use target position + offset to generate new camera position
                 var newPosition = target.Transform.Translation
-                    + new Vector3(0, 2, 10);
+                    + new Vector3(0, 3.5f, 15);
 
                 //set new camera position
                 transform.SetTranslation(newPosition);

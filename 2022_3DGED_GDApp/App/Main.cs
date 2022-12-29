@@ -617,13 +617,12 @@ namespace GD.App
         private void InitializeCollidableContent(float worldScale)
         {
             InitializeCollidableGround(worldScale);
-            InitializeCollidableBox();
-            InitializeCollidableHighDetailMonkey();
+            //InitializeCollidableBox();
         }
 
         private void InitializeNonCollidableContent(float worldScale)
         {
-            InitializeXYZ();
+            //InitializeXYZ();
 
             //create sky
             InitializeSkyBox(worldScale);
@@ -632,21 +631,16 @@ namespace GD.App
             InitializeDemoQuad();
 
             //load an FBX and draw
-            InitializeDemoModel();
+            //InitializeDemoModel();
 
             //TODO - remove these test methods later
             //test for one team
-            InitializeRadarModel();
+            //InitializeRadarModel();
             //test for another team
-            InitializeDemoButton();
+            //InitializeDemoButton();
 
             //quad with a tree texture
-            InitializeTreeQuad();
-        }
-
-        private void InitializeXYZ()
-        {
-            //  throw new NotImplementedException();
+            //InitializeTreeQuad();
         }
 
         private void InitializeCollidableGround(float worldScale)
@@ -658,7 +652,7 @@ namespace GD.App
             var ground = new GameObject("ground");
             ground.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(-90, 0, 0), new Vector3(0, 0, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Foliage/Ground/grass1");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Skybox/ground");
             ground.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
 
             //add Collision Surface(s)
@@ -708,101 +702,6 @@ namespace GD.App
             //    new MaterialProperties(0.2f, 0.8f, 0.7f));
             //collider.Enable(gameObject, true, 10);
             //gameObject.AddComponent(collider);
-
-            sceneManager.ActiveScene.Add(gameObject);
-        }
-
-        private void InitializeCollidableHighDetailMonkey()
-        {
-            //game object
-            var gameObject = new GameObject("my first collidable high detail monkey!", ObjectType.Static, RenderType.Opaque);
-            gameObject.GameObjectType = GameObjectType.Consumable;
-
-            //TODO - rotation on triangle mesh not working
-            gameObject.Transform = new Transform(
-                new Vector3(1, 1, 1),
-                new Vector3(0, 0, 0),
-                new Vector3(0, 1, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate2");
-            var model = Content.Load<Model>("Assets/Models/monkey");
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(litEffect),
-                new Material(texture, 1f, Color.Yellow),
-                mesh));
-
-            var model_medium = Content.Load<Model>("Assets/Models/monkey_medium");
-            var collider = new Collider(gameObject);
-            collider.AddPrimitive(CollisionUtility.GetTriangleMesh(model_medium,
-                gameObject.Transform), new MaterialProperties(0.8f, 0.8f, 0.7f));
-
-            //NOTE - TriangleMesh colliders MUST be marked as IMMOVABLE=TRUE
-            collider.Enable(gameObject, true, 1);
-            gameObject.AddComponent(collider);
-
-            sceneManager.ActiveScene.Add(gameObject);
-        }
-
-        private void InitializeDemoModel()
-        {
-            //game object
-            var gameObject = new GameObject("my first bottle!",
-                ObjectType.Static, RenderType.Opaque);
-
-            gameObject.Transform = new Transform(0.0005f * Vector3.One,
-                new Vector3(-90, 0, 0), new Vector3(2, 0, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate2");
-
-            var model = Content.Load<Model>("Assets/Models/bottle2");
-
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(litEffect),
-                new Material(texture, 1f, Color.White),
-                mesh));
-
-            sceneManager.ActiveScene.Add(gameObject);
-        }
-
-        private void InitializeRadarModel()
-        {
-            //game object
-            var gameObject = new GameObject("radar",
-                ObjectType.Static, RenderType.Opaque);
-
-            gameObject.Transform = new Transform(0.005f * Vector3.One,
-                new Vector3(0, 0, 0), new Vector3(8, 0, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate2");
-
-            var model = Content.Load<Model>("Assets/Models/radar-display");
-
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(litEffect),
-                new Material(texture, 1f, Color.White),
-                mesh));
-
-            sceneManager.ActiveScene.Add(gameObject);
-        }
-
-        private void InitializeDemoButton()
-        {
-            //game object
-            var gameObject = new GameObject("my first button!",
-                ObjectType.Static, RenderType.Opaque);
-
-            gameObject.Transform = new Transform(6 * Vector3.One,
-                new Vector3(0, 0, 0), new Vector3(-10, -5, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Button/button_DefaultMaterial_Base_color");
-
-            var model = Content.Load<Model>("Assets/Models/button");
-
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(litEffect),
-                new Material(texture, 1f, Color.White),
-                mesh));
 
             sceneManager.ActiveScene.Add(gameObject);
         }

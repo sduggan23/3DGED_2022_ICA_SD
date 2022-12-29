@@ -712,7 +712,7 @@ namespace GD.App
             var gameObject = new GameObject("my first quad",
                 ObjectType.Dynamic, RenderType.Opaque);
             gameObject.Transform = new Transform(null, null,
-                new Vector3(-2, 3.5f, 0));  //World
+                new Vector3(0, 3.5f, -5));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
             gameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new IcosahedronMesh(_graphics.GraphicsDevice)));
@@ -753,9 +753,9 @@ namespace GD.App
         {
             playerGameObject = new GameObject("player 1", ObjectType.Static, RenderType.Opaque);
 
-            playerGameObject.Transform = new Transform(new Vector3(0.4f, 0.4f, 1),
-                null, new Vector3(0, 0.2f, -2));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate2");
+            playerGameObject.Transform = new Transform(null,
+                null, new Vector3(0, 0.75f, 0));
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/pink");
             var model = Content.Load<Model>("Assets/Models/sphere");
             var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
 
@@ -766,10 +766,10 @@ namespace GD.App
             playerGameObject.AddComponent(new PlayerController(AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
                 AppData.PLAYER_ROTATE_SPEED_VECTOR2, true));
 
-            sceneManager.ActiveScene.Add(playerGameObject);
-
             //set this as active player
             Application.Player = playerGameObject;
+
+            sceneManager.ActiveScene.Add(playerGameObject);
         }
 
         private void InitializeSkyBox(float worldScale)

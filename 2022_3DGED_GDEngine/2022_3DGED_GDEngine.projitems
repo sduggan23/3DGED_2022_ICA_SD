@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\2D\Materials\TextSpriteMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Base\TexturedMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Base\WireframeMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Textured\OctahedronMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Textured\TetrahedronMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Wireframe\XYZMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IStoreable.cs" />

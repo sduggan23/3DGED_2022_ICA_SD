@@ -713,9 +713,9 @@ namespace GD.App
                 ObjectType.Dynamic, RenderType.Opaque);
             gameObject.Transform = new Transform(null, null,
                 new Vector3(-2, 3.5f, 0));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture2");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
             gameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new TetrahedronMesh(_graphics.GraphicsDevice)));
+                new Material(texture, 1), new OctahedronMesh(_graphics.GraphicsDevice)));
 
             //gameObject.AddComponent(new SimpleRotationBehaviour(new Vector3(1, 1, 1), 1 / 60.0f));
 

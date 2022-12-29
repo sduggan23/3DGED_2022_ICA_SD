@@ -41,7 +41,7 @@ namespace GD.Engine
             transform = gameObject.Transform;
 
             //instanciate a new character body
-            Body = new Character(0.05f, 0.25f);
+            Body = new Character(5f, 0.25f);
 
             //set the parent game object to be the attached drawn object (used when collisions occur)
             Body.Parent = gameObject;

@@ -712,7 +712,7 @@ namespace GD.App
             var gameObject = new GameObject("my first quad",
                 ObjectType.Dynamic, RenderType.Opaque);
             gameObject.Transform = new Transform(null, null,
-                new Vector3(0, 3.5f, -5));  //World
+                new Vector3(0, 3.5f, -10));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
             gameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new IcosahedronMesh(_graphics.GraphicsDevice)));
@@ -751,23 +751,44 @@ namespace GD.App
 
         private void InitializePlayer()
         {
-            playerGameObject = new GameObject("player 1", ObjectType.Static, RenderType.Opaque);
+            playerGameObject = new GameObject("player 1", ObjectType.Dynamic, RenderType.Opaque);
 
             playerGameObject.Transform = new Transform(null,
-                null, new Vector3(0, 0.75f, 0));
+                null, new Vector3(0, 5.75f, 0));
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/pink");
-            var model = Content.Load<Model>("Assets/Models/sphere");
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-
             playerGameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1),
-                mesh));
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            playerGameObject.AddComponent(new PlayerController(AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
-                AppData.PLAYER_ROTATE_SPEED_VECTOR2, true));
+            //playerGameObject.AddComponent(new PlayerController(AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
+            //    AppData.PLAYER_ROTATE_SPEED_VECTOR2, true));
 
             //set this as active player
             Application.Player = playerGameObject;
+
+            #region Collision - Add capsule
+
+            //adding a collidable surface that enables acceleration, jumping
+            var characterCollider = new CharacterCollider(playerGameObject, true);
+
+            playerGameObject.AddComponent(characterCollider);
+            characterCollider.AddPrimitive(new Box(
+                playerGameObject.Transform.Translation,
+                new Vector3(0, 0, 0),
+                 new Vector3(1, 1, 1)),
+                new MaterialProperties(0.2f, 0.8f, 0.7f));
+            characterCollider.Enable(playerGameObject, false, 1);
+
+            #endregion
+
+            #region Collision - Add Controller for movement (now with collision)
+
+            playerGameObject.AddComponent(new CollidableFirstPersonController(playerGameObject,
+                characterCollider,
+                AppData.THIRD_PERSON_MOVE_SPEED, AppData.THIRD_PERSON_STRAFE_SPEED,
+                AppData.PLAYER_ROTATE_SPEED_VECTOR2, AppData.THIRD_PERSON_CAMERA_SMOOTH_FACTOR, true,
+                AppData.PLAYER_COLLIDABLE_JUMP_HEIGHT));
+
+            #endregion
 
             sceneManager.ActiveScene.Add(playerGameObject);
         }

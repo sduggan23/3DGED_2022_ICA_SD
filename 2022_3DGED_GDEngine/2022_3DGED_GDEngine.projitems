@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\2D\Materials\TextSpriteMaterial.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Base\TexturedMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Base\WireframeMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Textured\TetrahedronMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\Wireframe\XYZMesh.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IStoreable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Interfaces\IProvideStats.cs" />
@@ -102,8 +103,6 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Core\Bugs\" />
     <Folder Include="$(MSBuildThisFileDirectory)Core\Enums\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\Meshes\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Core\Graphics\3D\" />
     <Folder Include="$(MSBuildThisFileDirectory)Core\Other\Level\" />
     <Folder Include="$(MSBuildThisFileDirectory)Core\Other\" />
     <Folder Include="$(MSBuildThisFileDirectory)Core\Other\Screen\" />

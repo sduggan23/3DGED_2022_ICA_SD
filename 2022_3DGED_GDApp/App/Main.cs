@@ -710,14 +710,23 @@ namespace GD.App
         {
             //game object
             var gameObject = new GameObject("my first quad",
-                ObjectType.Static, RenderType.Opaque);
+                ObjectType.Dynamic, RenderType.Opaque);
             gameObject.Transform = new Transform(null, null,
-                new Vector3(-2, 1, 0));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate1");
+                new Vector3(-2, 3.5f, 0));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture2");
             gameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new QuadMesh(_graphics.GraphicsDevice)));
+                new Material(texture, 1), new TetrahedronMesh(_graphics.GraphicsDevice)));
 
-            gameObject.AddComponent(new SimpleRotationBehaviour(new Vector3(1, 0, 0), 5 / 60.0f));
+            //gameObject.AddComponent(new SimpleRotationBehaviour(new Vector3(1, 1, 1), 1 / 60.0f));
+
+            var collider = new Collider(gameObject, true);
+            collider.AddPrimitive(new Box(
+                gameObject.Transform.Translation,
+                gameObject.Transform.Rotation,
+                gameObject.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            collider.Enable(gameObject, false, 10);
+            gameObject.AddComponent(collider);
 
             sceneManager.ActiveScene.Add(gameObject);
         }

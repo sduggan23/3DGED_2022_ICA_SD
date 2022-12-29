@@ -655,7 +655,7 @@ namespace GD.App
             var ground = new GameObject("ground");
             ground.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(-90, 0, 0), new Vector3(0, 0, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Skybox/ground");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_dn");
             ground.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
 
             //add Collision Surface(s)
@@ -670,7 +670,6 @@ namespace GD.App
 
             sceneManager.ActiveScene.Add(ground);
         }
-
 
         private void InitializeCollidableBox()
         {
@@ -808,7 +807,7 @@ namespace GD.App
             //skybox - back face
             quad = new GameObject("skybox back face");
             quad.Transform = new Transform(new Vector3(worldScale, worldScale, 1), null, new Vector3(0, 0, -halfWorldScale));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Skybox/back");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_bk");
             quad.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
             sceneManager.ActiveScene.Add(quad);
 
@@ -816,7 +815,7 @@ namespace GD.App
             quad = new GameObject("skybox left face");
             quad.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(0, 90, 0), new Vector3(-halfWorldScale, 0, 0));
-            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/left");
+            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_lf");
             quad.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
             sceneManager.ActiveScene.Add(quad);
 
@@ -824,7 +823,7 @@ namespace GD.App
             quad = new GameObject("skybox right face");
             quad.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(0, -90, 0), new Vector3(halfWorldScale, 0, 0));
-            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/right");
+            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_rt");
             quad.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
             sceneManager.ActiveScene.Add(quad);
 
@@ -832,7 +831,7 @@ namespace GD.App
             quad = new GameObject("skybox top face");
             quad.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(90, -90, 0), new Vector3(0, halfWorldScale, 0));
-            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/sky");
+            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_up");
             quad.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
             sceneManager.ActiveScene.Add(quad);
 
@@ -840,7 +839,7 @@ namespace GD.App
             quad = new GameObject("skybox front face");
             quad.Transform = new Transform(new Vector3(worldScale, worldScale, 1),
                 new Vector3(0, -180, 0), new Vector3(0, 0, halfWorldScale));
-            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/front");
+            texture = Content.Load<Texture2D>("Assets/Textures/Skybox/Tron/tron_ft");
             quad.AddComponent(new Renderer(gdBasicEffect, new Material(texture, 1), quadMesh));
             sceneManager.ActiveScene.Add(quad);
         }

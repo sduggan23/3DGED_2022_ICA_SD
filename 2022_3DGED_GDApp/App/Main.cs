@@ -584,11 +584,14 @@ namespace GD.App
 
             #region Curve
 
-            Curve3D curve3D = new Curve3D(CurveLoopType.Oscillate);
-            curve3D.Add(new Vector3(0, 2, 5), 0);
-            curve3D.Add(new Vector3(0, 5, 10), 1000);
-            curve3D.Add(new Vector3(0, 8, 25), 2500);
-            curve3D.Add(new Vector3(0, 5, 35), 4000);
+            Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
+            curve3D.Add(new Vector3(-12, 1, 150), 0);
+            //curve3D.Add(new Vector3(0, 10f, 125), 2500);
+            curve3D.Add(new Vector3(12, 7.5f, 100), 5000);
+            //curve3D.Add(new Vector3(0, 7.5f, 75), 7500);
+            curve3D.Add(new Vector3(-12, 7, 50), 10000);
+            //curve3D.Add(new Vector3(0, 5.5F, 25), 12500);
+            curve3D.Add(new Vector3(0, 4.25F, 15), 15000);
 
             cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
             cameraGameObject.Transform =
@@ -611,7 +614,7 @@ namespace GD.App
 
             #endregion Curve
 
-            cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
+            cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
         }
 
         private void InitializeCollidableContent(float worldScale)
@@ -1137,6 +1140,8 @@ namespace GD.App
             else if (Input.Keys.IsPressed(Keys.F3))
                 cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
             else if (Input.Keys.IsPressed(Keys.F4))
+                cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
+            else if (Input.Keys.IsPressed(Keys.W))
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
 
             #endregion Demo - Camera switching

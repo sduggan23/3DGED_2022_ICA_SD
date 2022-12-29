@@ -671,6 +671,7 @@ namespace GD.App
             sceneManager.ActiveScene.Add(ground);
         }
 
+
         private void InitializeCollidableBox()
         {
             //game object
@@ -776,7 +777,7 @@ namespace GD.App
             playerGameObject.AddComponent(characterCollider);
             characterCollider.AddPrimitive(new Box(
                 playerGameObject.Transform.Translation,
-                new Vector3(0, 0, 0),
+                playerGameObject.Transform.Translation,
                  new Vector3(1, 1, 1)),
                 new MaterialProperties(0.2f, 0.8f, 0.7f));
             characterCollider.Enable(playerGameObject, false, 1);
@@ -788,7 +789,7 @@ namespace GD.App
             playerGameObject.AddComponent(new CollidableFirstPersonController(playerGameObject,
                 characterCollider,
                 AppData.THIRD_PERSON_MOVE_SPEED, AppData.THIRD_PERSON_STRAFE_SPEED,
-                AppData.PLAYER_ROTATE_SPEED_VECTOR2, AppData.THIRD_PERSON_CAMERA_SMOOTH_FACTOR, true,
+                new Vector2(0,0), AppData.THIRD_PERSON_CAMERA_SMOOTH_FACTOR, true,
                 AppData.PLAYER_COLLIDABLE_JUMP_HEIGHT));
 
             #endregion

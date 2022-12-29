@@ -62,7 +62,7 @@ namespace GD.App
 
         public static readonly float FIRST_PERSON_CAMERA_SMOOTH_FACTOR = 0.1f;
 
-        public static readonly float PLAYER_COLLIDABLE_JUMP_HEIGHT = 5;
+        public static readonly float PLAYER_COLLIDABLE_JUMP_HEIGHT = 10;
 
         #endregion Camera - First Person
 
@@ -70,8 +70,8 @@ namespace GD.App
 
         public static readonly string THIRD_PERSON_CAMERA_NAME = "third person camera";
 
-        public static readonly float THIRD_PERSON_MOVE_SPEED = 0.55f;
-        public static readonly float THIRD_PERSON_STRAFE_SPEED = 0.4f * THIRD_PERSON_MOVE_SPEED;
+        public static readonly float THIRD_PERSON_MOVE_SPEED = 0.5f;
+        public static readonly float THIRD_PERSON_STRAFE_SPEED = 0.35f * THIRD_PERSON_MOVE_SPEED;
 
         public static readonly float THIRD_PERSON_CAMERA_FCP = 1000;
         public static readonly float THIRD_PERSON_CAMERA_NCP = 0.1f;

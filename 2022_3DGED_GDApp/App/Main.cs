@@ -198,6 +198,23 @@ namespace GD.App
             EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
 
             #endregion
+
+                object[] parameters = { "BGMusic" };
+                EventDispatcher.Raise(
+                    new EventData(EventCategoryType.Player,
+                    EventActionType.OnWin,
+                    parameters));
+
+            //if (Input.Keys.WasJustPressed(Keys.B))
+            //{
+            //    object[] parameters = { "boom1" };
+            //    EventDispatcher.Raise(
+            //        new EventData(EventCategoryType.Player,
+            //        EventActionType.OnWin,
+            //        parameters));
+
+            //    //    Application.SoundManager.Play2D("boom1");
+            //}
         }
 
         private void InitializeMenu()
@@ -424,6 +441,16 @@ namespace GD.App
                 SoundCategoryType.Alarm,
                 new Vector3(1, 1, 0),
                 false));
+
+            var sound = Content.Load<SoundEffect>("Assets/Audio/Non-Digetic/cigaro30__synthwave-beat");
+
+            //Add the new sound for background
+            soundManager.Add(new Cue(
+                "BGMusic",
+                 sound,
+                 SoundCategoryType.BackgroundMusic,
+                 new Vector3(0.1f, 0, 0),
+                 true));
         }
 
         private void LoadTextures()
@@ -1244,7 +1271,7 @@ namespace GD.App
 
             if (Input.Keys.WasJustPressed(Keys.B))
             {
-                object[] parameters = { "boom1" };
+                object[] parameters = { "BGMusic" };
                 EventDispatcher.Raise(
                     new EventData(EventCategoryType.Player,
                     EventActionType.OnWin,

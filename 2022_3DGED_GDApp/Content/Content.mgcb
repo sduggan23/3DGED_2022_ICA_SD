@@ -25,6 +25,12 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/smokealarm1.ogg
 
+#begin Assets/Audio/Non-Digetic/cigaro30__synthwave-beat.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Non-Digetic/cigaro30__synthwave-beat.wav
+
 #begin Assets/Fonts/menu.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

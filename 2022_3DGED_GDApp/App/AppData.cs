@@ -1,7 +1,7 @@
 ﻿#region Pre-compiler directives
 
 //#define DEMO
-//#define HI_RES
+#define HI_RES
 
 #endregion
 
@@ -70,8 +70,8 @@ namespace GD.App
 
         public static readonly string THIRD_PERSON_CAMERA_NAME = "third person camera";
 
-        public static readonly float THIRD_PERSON_MOVE_SPEED = 0.5f;
-        public static readonly float THIRD_PERSON_STRAFE_SPEED = 0.35f * THIRD_PERSON_MOVE_SPEED;
+        public static readonly float THIRD_PERSON_MOVE_SPEED = 0.15f;
+        public static readonly float THIRD_PERSON_STRAFE_SPEED = 0.85f * THIRD_PERSON_MOVE_SPEED;
 
         public static readonly float THIRD_PERSON_CAMERA_FCP = 1000;
         public static readonly float THIRD_PERSON_CAMERA_NCP = 0.1f;
@@ -79,7 +79,6 @@ namespace GD.App
         public static readonly float THIRD_PERSON_HALF_FOV = MathHelper.PiOver2 / 2.0f;
              
         public static readonly float THIRD_PERSON_CAMERA_SMOOTH_FACTOR = 0.1f;
-
 
         #endregion
 

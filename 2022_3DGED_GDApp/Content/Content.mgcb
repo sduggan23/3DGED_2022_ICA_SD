@@ -82,6 +82,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Level/gridpurple.jpg
 
+#begin Assets/Textures/Level/gridred.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Level/gridred.png
+
 #begin Assets/Textures/Level/pink.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -285,30 +297,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Props/Crates/crate1.jpg
-
-#begin Assets/Textures/Props/Crates/crate1.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Props/Crates/crate1.jpg
-
-#begin Assets/Textures/Props/Crates/crate2.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Props/Crates/crate2.jpg
 
 #begin Assets/Textures/Props/Crates/crate2.jpg
 /importer:TextureImporter

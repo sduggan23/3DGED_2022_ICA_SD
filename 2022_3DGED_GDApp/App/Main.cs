@@ -139,9 +139,9 @@ namespace GD.App
             //game specific content
             InitializeLevel("My Amazing Game", AppData.SKYBOX_WORLD_SCALE);
 
-#if SHOW_DEBUG_INFO
-            InitializeDebug();
-#endif
+//#if SHOW_DEBUG_INFO
+//            InitializeDebug();
+//#endif
 
 #if DEMO
             DemoCode();
@@ -614,14 +614,14 @@ namespace GD.App
 
             #endregion Curve
 
-            cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
+            cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
         }
 
         private void InitializeCollidableContent(float worldScale)
         {
             InitializeCollidableGround(worldScale);
             InitializeCollidableLevel();
-            //InitializeCollidableBox();
+            InitializeCollidableObstacles();
         }
 
         private void InitializeNonCollidableContent(float worldScale)
@@ -632,7 +632,7 @@ namespace GD.App
             InitializeSkyBox(worldScale);
 
             //quad with crate texture
-            InitializeDemoQuad();
+            //InitializeDemoQuad();
 
             //load an FBX and draw
             //InitializeDemoModel();
@@ -681,7 +681,6 @@ namespace GD.App
                 (new Vector3(1, 10f, 1000),
                 null,
                 new Vector3(15f, 5f, -350));
-            //var texture = Content.Load<Texture2D>("Assets/Textures/Props/texture3");
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue");
 
             wallR.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -776,42 +775,62 @@ namespace GD.App
             #endregion floor
         }
 
-        private void InitializeCollidableBox()
+        private void InitializeCollidableObstacles()
         {
-            //game object
-            var gameObject = new GameObject("my first collidable box!", ObjectType.Dynamic, RenderType.Opaque);
-            gameObject.GameObjectType = GameObjectType.Collectible;
+            var obstacleSmall1 = new GameObject("obstacle small 1",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleSmall1.Transform = new Transform(new Vector3(3, 3, 3), null,
+                new Vector3(0, 1.5f, -500));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridred");
+            obstacleSmall1.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            gameObject.Transform = new Transform(
-                new Vector3(1, 1, 1),
-                new Vector3(45, 45, 0),
-                new Vector3(0, 15, 0));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Props/Crates/crate2");
-            var model = Content.Load<Model>("Assets/Models/cube");
-            var mesh = new Engine.ModelMesh(_graphics.GraphicsDevice, model);
-
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(litEffect),
-                new Material(texture, 1, Color.White),
-                mesh));
-
-            var collider = new Collider(gameObject, true);
-            collider.AddPrimitive(new Box(
-                gameObject.Transform.Translation,
-                gameObject.Transform.Rotation,
-                gameObject.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+            var obstacleSmall1Collider = new Collider(obstacleSmall1, true);
+            obstacleSmall1Collider.AddPrimitive(new Box(
+                obstacleSmall1.Transform.Translation,
+                obstacleSmall1.Transform.Rotation,
+                obstacleSmall1.Transform.Scale),
                 new MaterialProperties(0.8f, 0.8f, 0.7f));
-            collider.Enable(gameObject, false, 10);
-            gameObject.AddComponent(collider);
+            obstacleSmall1Collider.Enable(obstacleSmall1, false, 10);
+            obstacleSmall1.AddComponent(obstacleSmall1Collider);
 
-            //var collider = new Collider(gameObject);
-            //collider.AddPrimitive(new Sphere(
-            //    gameObject.Transform.Translation, 1), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
-            //    new MaterialProperties(0.2f, 0.8f, 0.7f));
-            //collider.Enable(gameObject, true, 10);
-            //gameObject.AddComponent(collider);
+            sceneManager.ActiveScene.Add(obstacleSmall1);
 
-            sceneManager.ActiveScene.Add(gameObject);
+            var obstacleSmall2 = new GameObject("obstacle small 2",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleSmall2.Transform = new Transform(new Vector3(3, 3, 3), null,
+                new Vector3(5, 1.5f, -750));  //World
+            obstacleSmall2.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            var obstacleSmall2Collider = new Collider(obstacleSmall2, true);
+            obstacleSmall2Collider.AddPrimitive(new Box(
+                obstacleSmall2.Transform.Translation,
+                obstacleSmall2.Transform.Rotation,
+                obstacleSmall2.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            obstacleSmall2Collider.Enable(obstacleSmall2, false, 10);
+            obstacleSmall2.AddComponent(obstacleSmall2Collider);
+
+            sceneManager.ActiveScene.Add(obstacleSmall2);
+
+            var obstacleSmall3 = new GameObject("obstacle small 3",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleSmall3.Transform = new Transform(new Vector3(3, 3, 3), null,
+                new Vector3(-5, 1.5f, -750));  //World
+            obstacleSmall3.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            var obstacleSmall3Collider = new Collider(obstacleSmall3, true);
+            obstacleSmall3Collider.AddPrimitive(new Box(
+                obstacleSmall3.Transform.Translation,
+                obstacleSmall3.Transform.Rotation,
+                obstacleSmall3.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            obstacleSmall3Collider.Enable(obstacleSmall3, false, 10);
+            obstacleSmall3.AddComponent(obstacleSmall3Collider);
+
+            sceneManager.ActiveScene.Add(obstacleSmall3);
         }
 
         private void InitializeDemoQuad()
@@ -1271,6 +1290,9 @@ namespace GD.App
             #endregion
 
 #endif
+            if (Input.Keys.IsPressed(Keys.Escape))
+                Exit();
+
             //fixed a bug with components not getting Update called
             base.Update(gameTime);
         }

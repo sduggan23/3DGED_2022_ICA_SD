@@ -426,18 +426,7 @@ namespace GD.App
 
         private void LoadSounds()
         {
-            //var soundEffect =
-            //    Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
-
-            ////add the new sound effect
-            //soundManager.Add(new Cue(
-            //    "boom1",
-            //    soundEffect,
-            //    SoundCategoryType.Alarm,
-            //    new Vector3(1, 1, 0),
-            //    false));
-
-            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
+            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
 
             //Add the new sound for background
             soundManager.Add(new Cue(
@@ -584,37 +573,6 @@ namespace GD.App
 
             #endregion First Person
 
-            #region Security
-
-            //camera 2
-            cameraGameObject = new GameObject(AppData.SECURITY_CAMERA_NAME);
-
-            cameraGameObject.Transform
-                = new Transform(null,
-                null,
-                new Vector3(0, 2, 25));
-
-            //add camera (view, projection)
-            cameraGameObject.AddComponent(new Camera(
-                MathHelper.PiOver2 / 2,
-                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
-                0.1f, 3500,
-                new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
-
-            //add rotation
-            cameraGameObject.AddComponent(new CycledRotationBehaviour(
-                AppData.SECURITY_CAMERA_ROTATION_AXIS,
-                AppData.SECURITY_CAMERA_MAX_ANGLE,
-                AppData.SECURITY_CAMERA_ANGULAR_SPEED_MUL,
-                TurnDirectionType.Right));
-
-            //adds FOV change on mouse scroll
-            cameraGameObject.AddComponent(new CameraFOVController(AppData.CAMERA_FOV_INCREMENT_LOW));
-
-            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
-
-            #endregion Security
-
             #region Curve
 
             Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
@@ -659,25 +617,9 @@ namespace GD.App
 
         private void InitializeNonCollidableContent(float worldScale)
         {
-            //InitializeXYZ();
-
             //create sky
             InitializeSkyBox(worldScale);
 
-            //quad with crate texture
-            //InitializeDemoQuad();
-
-            //load an FBX and draw
-            //InitializeDemoModel();
-
-            //TODO - remove these test methods later
-            //test for one team
-            //InitializeRadarModel();
-            //test for another team
-            //InitializeDemoButton();
-
-            //quad with a tree texture
-            //InitializeTreeQuad();
         }
 
         private void InitializeCollidableGround(float worldScale)
@@ -864,49 +806,6 @@ namespace GD.App
             obstacleSmall3.AddComponent(obstacleSmall3Collider);
 
             sceneManager.ActiveScene.Add(obstacleSmall3);
-        }
-
-        private void InitializeDemoQuad()
-        {
-            //game object
-            var gameObject = new GameObject("my first quad",
-                ObjectType.Dynamic, RenderType.Opaque);
-            gameObject.Transform = new Transform(null, null,
-                new Vector3(0, 3.5f, -10));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
-            gameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new IcosahedronMesh(_graphics.GraphicsDevice)));
-
-            //gameObject.AddComponent(new SimpleRotationBehaviour(new Vector3(1, 1, 1), 1 / 60.0f));
-
-            var collider = new Collider(gameObject, true);
-            collider.AddPrimitive(new Box(
-                gameObject.Transform.Translation,
-                gameObject.Transform.Rotation,
-                gameObject.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
-                new MaterialProperties(0.8f, 0.8f, 0.7f));
-            collider.Enable(gameObject, false, 10);
-            gameObject.AddComponent(collider);
-
-            sceneManager.ActiveScene.Add(gameObject);
-        }
-
-        private void InitializeTreeQuad()
-        {
-            //game object
-            var gameObject = new GameObject("my first tree", ObjectType.Static,
-                RenderType.Transparent);
-            gameObject.Transform = new Transform(new Vector3(3, 3, 1), null, new Vector3(-6, 1.5f, 1));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Foliage/Trees/tree1");
-            gameObject.AddComponent(new Renderer(
-                new GDBasicEffect(unlitEffect),
-                new Material(texture, 1),
-                new QuadMesh(_graphics.GraphicsDevice)));
-
-            //a weird tree that makes sounds
-            gameObject.AddComponent(new AudioEmitterBehaviour());
-
-            sceneManager.ActiveScene.Add(gameObject);
         }
 
         private void InitializePlayer()

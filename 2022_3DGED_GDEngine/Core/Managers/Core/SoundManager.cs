@@ -181,25 +181,36 @@ namespace GD.Engine.Managers
 
         private void HandlePlayerEvent(EventData eventData)
         {
-            if (eventData.EventActionType == EventActionType.OnLose
-                || eventData.EventActionType == EventActionType.OnWin)
-            {
-                Play2D(eventData.Parameters[0] as string);
-            }
-
-            //switch (eventData.EventActionType)
+            //if (eventData.EventActionType == EventActionType.OnLose
+            //    || eventData.EventActionType == EventActionType.OnWin
+            //    || eventData.EventActionType == EventActionType.OnPlay)
             //{
-            //    case EventActionType.OnWin:
-            //        Play2D(eventData.Parameters[2] as string);
-            //        break;
-
-            //    case EventActionType.OnLose:
-            //        Play2D(eventData.Parameters[2] as string);
-            //        break;
-
-            //    default:
-            //        break;
+            //    Play2D(eventData.Parameters[0] as string);
             //}
+
+            switch (eventData.EventActionType)
+            {
+                case EventActionType.OnPlay:
+                    Play2D(eventData.Parameters[0] as string);
+                    break;
+                case EventActionType.OnPause:
+                    Pause(eventData.Parameters[0] as string);
+                    break;
+                case EventActionType.OnPlay2D:
+                    Play2D(eventData.Parameters[0] as string);
+                    break;
+
+                case EventActionType.OnWin:
+                    Play2D(eventData.Parameters[0] as string);
+                    break;
+
+                case EventActionType.OnLose:
+                    Play2D(eventData.Parameters[2] as string);
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         #endregion Constructors

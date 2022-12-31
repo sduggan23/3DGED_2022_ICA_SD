@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Assets/Audio/Diegetic/AbstractSpaceshipA01_Flat.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Diegetic/AbstractSpaceshipA01_Flat.wav
+
+#begin Assets/Audio/Diegetic/Engine Hum.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Diegetic/Engine Hum.wav
+
 #begin Assets/Audio/Diegetic/explode1.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -24,6 +36,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/smokealarm1.ogg
+
+#begin Assets/Audio/Diegetic/Spaceship Engine 2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Diegetic/Spaceship Engine 2.wav
 
 #begin Assets/Audio/Non-Digetic/cigaro30__synthwave-beat.wav
 /importer:WavImporter

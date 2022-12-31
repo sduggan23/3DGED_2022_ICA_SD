@@ -103,6 +103,11 @@ namespace GD.App
         {
             switch (eventData.EventActionType)
             {
+
+                case EventActionType.OnPlay2D:
+                    System.Diagnostics.Debug.WriteLine(eventData.Parameters[0] as string);
+                    break;
+
                 case EventActionType.OnWin:
                     System.Diagnostics.Debug.WriteLine(eventData.Parameters[0] as string);
                     break;
@@ -199,22 +204,12 @@ namespace GD.App
 
             #endregion
 
-                object[] parameters = { "BGMusic" };
-                EventDispatcher.Raise(
-                    new EventData(EventCategoryType.Player,
-                    EventActionType.OnWin,
-                    parameters));
+            object[] parameters = { "BGMusic" };
+            EventDispatcher.Raise(
+                new EventData(EventCategoryType.Player,
+                EventActionType.OnPlay,
+                parameters));
 
-            //if (Input.Keys.WasJustPressed(Keys.B))
-            //{
-            //    object[] parameters = { "boom1" };
-            //    EventDispatcher.Raise(
-            //        new EventData(EventCategoryType.Player,
-            //        EventActionType.OnWin,
-            //        parameters));
-
-            //    //    Application.SoundManager.Play2D("boom1");
-            //}
         }
 
         private void InitializeMenu()
@@ -431,16 +426,27 @@ namespace GD.App
 
         private void LoadSounds()
         {
-            var soundEffect =
-                Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
+            //var soundEffect =
+            //    Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
 
-            //add the new sound effect
+            ////add the new sound effect
+            //soundManager.Add(new Cue(
+            //    "boom1",
+            //    soundEffect,
+            //    SoundCategoryType.Alarm,
+            //    new Vector3(1, 1, 0),
+            //    false));
+
+            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
+
+            //Add the new sound for background
             soundManager.Add(new Cue(
-                "boom1",
-                soundEffect,
-                SoundCategoryType.Alarm,
-                new Vector3(1, 1, 0),
-                false));
+                "Engine",
+                 soundEffect,
+                 SoundCategoryType.Alarm,
+                 new Vector3(0.1f, 0, 0),
+                 false));
+
 
             var sound = Content.Load<SoundEffect>("Assets/Audio/Non-Digetic/cigaro30__synthwave-beat");
 
@@ -1269,17 +1275,6 @@ namespace GD.App
 
             #region Demo - sound
 
-            if (Input.Keys.WasJustPressed(Keys.B))
-            {
-                object[] parameters = { "BGMusic" };
-                EventDispatcher.Raise(
-                    new EventData(EventCategoryType.Player,
-                    EventActionType.OnWin,
-                    parameters));
-
-                //    Application.SoundManager.Play2D("boom1");
-            }
-
             #endregion
 
             #region Demo - Camera switching
@@ -1310,6 +1305,26 @@ namespace GD.App
             #endregion Demo - Gamepad
 
             #region Demo - Raising events using GDEvent
+
+            if (Input.Keys.IsPressed(Keys.W))
+            {
+                object[] parameters = { "Engine" };
+                EventDispatcher.Raise(
+                    new EventData(EventCategoryType.Player,
+                    EventActionType.OnPlay2D,
+                    parameters));
+
+            }
+
+            if (Input.Keys.IsReleased(Keys.W))
+            {
+                object[] parameters = { "Engine" };
+                EventDispatcher.Raise(
+                    new EventData(EventCategoryType.Player,
+                    EventActionType.OnPause,
+                    parameters));
+
+            }
 
             if (Input.Keys.WasJustPressed(Keys.E))
                 OnChanged.Invoke(this, null); //passing null for EventArgs but we'll make our own class MyEventArgs::EventArgs later

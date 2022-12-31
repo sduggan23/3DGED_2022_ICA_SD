@@ -204,11 +204,15 @@ namespace GD.App
 
             #endregion
 
-            object[] parameters = { "BGMusic" };
-            EventDispatcher.Raise(
-                new EventData(EventCategoryType.Player,
-                EventActionType.OnPlay,
-                parameters));
+            #region Background Audio
+
+            //object[] parameters = { "BGMusic" };
+            //EventDispatcher.Raise(
+            //    new EventData(EventCategoryType.Player,
+            //    EventActionType.OnPlay,
+            //    parameters));
+
+            #endregion Background Audio
 
         }
 
@@ -426,12 +430,21 @@ namespace GD.App
 
         private void LoadSounds()
         {
-            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
+            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
 
             //Add the new sound for background
             soundManager.Add(new Cue(
                 "Engine",
                  soundEffect,
+                 SoundCategoryType.Alarm,
+                 new Vector3(0.1f, 0, 0),
+                 false));
+
+            var soundFX = Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
+            //Add the new sound for background
+            soundManager.Add(new Cue(
+                "Explode",
+                 soundFX,
                  SoundCategoryType.Alarm,
                  new Vector3(0.1f, 0, 0),
                  false));
@@ -446,6 +459,8 @@ namespace GD.App
                  SoundCategoryType.BackgroundMusic,
                  new Vector3(0.1f, 0, 0),
                  true));
+
+
         }
 
         private void LoadTextures()
@@ -752,6 +767,7 @@ namespace GD.App
 
         private void InitializeCollidableObstacles()
         {
+            #region obstacle1
             var obstacleSmall1 = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall1.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -760,17 +776,37 @@ namespace GD.App
             obstacleSmall1.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            var obstacleSmall1Collider = new Collider(obstacleSmall1, true);
-            obstacleSmall1Collider.AddPrimitive(new Box(
+            //var obstacleSmall1Collider = new Collider(obstacleSmall1, true);
+            //obstacleSmall1Collider.AddPrimitive(new Box(
+            //    obstacleSmall1.Transform.Translation,
+            //    obstacleSmall1.Transform.Rotation,
+            //    obstacleSmall1.Transform.Scale),
+            //    new MaterialProperties(0.8f, 0.8f, 0.7f));
+            //obstacleSmall1Collider.Enable(obstacleSmall1, false, 10);
+            //obstacleSmall1.AddComponent(obstacleSmall1Collider);
+
+
+            //sceneManager.ActiveScene.Add(obstacleSmall1);
+
+
+
+            Collider collider = new ObstacleCollider(obstacleSmall1, true, false);
+            collider.AddPrimitive(
+                new Box(
                 obstacleSmall1.Transform.Translation,
                 obstacleSmall1.Transform.Rotation,
                 obstacleSmall1.Transform.Scale),
-                new MaterialProperties(0.8f, 0.8f, 0.7f));
-            obstacleSmall1Collider.Enable(obstacleSmall1, false, 10);
-            obstacleSmall1.AddComponent(obstacleSmall1Collider);
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            collider.Enable(obstacleSmall1, false, 10);
+            obstacleSmall1.AddComponent(collider);
 
             sceneManager.ActiveScene.Add(obstacleSmall1);
 
+            #endregion obstacle1
+
+            #region obstacle2
             var obstacleSmall2 = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall2.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -789,6 +825,10 @@ namespace GD.App
 
             sceneManager.ActiveScene.Add(obstacleSmall2);
 
+            #endregion obstacle2
+
+            #region obstacle3
+
             var obstacleSmall3 = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall3.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -806,6 +846,8 @@ namespace GD.App
             obstacleSmall3.AddComponent(obstacleSmall3Collider);
 
             sceneManager.ActiveScene.Add(obstacleSmall3);
+
+            #endregion obstacle3
         }
 
         private void InitializePlayer()

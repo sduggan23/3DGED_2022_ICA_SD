@@ -530,6 +530,9 @@ namespace GD.App
 
             cameraManager.Add(cameraGameObject.Name, cameraGameObject);
 
+            cameraGameObject.AddComponent(new AudioListenerBehaviour());
+
+
             #endregion
 
             #region First Person
@@ -768,12 +771,12 @@ namespace GD.App
         private void InitializeCollidableObstacles()
         {
             #region obstacle1
-            var obstacleSmall1 = new GameObject("obstacle small 1",
+            var obstacleSmall = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
-            obstacleSmall1.Transform = new Transform(new Vector3(3, 3, 3), null,
+            obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
                 new Vector3(0, 1.5f, -500));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridred");
-            obstacleSmall1.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+            obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
             //var obstacleSmall1Collider = new Collider(obstacleSmall1, true);
@@ -785,67 +788,98 @@ namespace GD.App
             //obstacleSmall1Collider.Enable(obstacleSmall1, false, 10);
             //obstacleSmall1.AddComponent(obstacleSmall1Collider);
 
-
             //sceneManager.ActiveScene.Add(obstacleSmall1);
 
-
-
-            Collider collider = new ObstacleCollider(obstacleSmall1, true, false);
-            collider.AddPrimitive(
+            Collider obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleSmallCollider.AddPrimitive(
                 new Box(
-                obstacleSmall1.Transform.Translation,
-                obstacleSmall1.Transform.Rotation,
-                obstacleSmall1.Transform.Scale),
+                obstacleSmall.Transform.Translation,
+                obstacleSmall.Transform.Rotation,
+                obstacleSmall.Transform.Scale),
                 new MaterialProperties(0.8f, 0.8f, 0.7f)
                 );
 
-            collider.Enable(obstacleSmall1, false, 10);
-            obstacleSmall1.AddComponent(collider);
+            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleSmallCollider);
 
-            sceneManager.ActiveScene.Add(obstacleSmall1);
+            obstacleSmall.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleSmall);
 
             #endregion obstacle1
 
             #region obstacle2
-            var obstacleSmall2 = new GameObject("obstacle small 2",
+            obstacleSmall = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
-            obstacleSmall2.Transform = new Transform(new Vector3(3, 3, 3), null,
+            obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
                 new Vector3(5, 1.5f, -750));  //World
-            obstacleSmall2.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+            obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            var obstacleSmall2Collider = new Collider(obstacleSmall2, true);
-            obstacleSmall2Collider.AddPrimitive(new Box(
-                obstacleSmall2.Transform.Translation,
-                obstacleSmall2.Transform.Rotation,
-                obstacleSmall2.Transform.Scale),
-                new MaterialProperties(0.8f, 0.8f, 0.7f));
-            obstacleSmall2Collider.Enable(obstacleSmall2, false, 10);
-            obstacleSmall2.AddComponent(obstacleSmall2Collider);
+            //var obstacleSmall2Collider = new Collider(obstacleSmall2, true);
+            //obstacleSmall2Collider.AddPrimitive(new Box(
+            //    obstacleSmall2.Transform.Translation,
+            //    obstacleSmall2.Transform.Rotation,
+            //    obstacleSmall2.Transform.Scale),
+            //    new MaterialProperties(0.8f, 0.8f, 0.7f));
+            //obstacleSmall2Collider.Enable(obstacleSmall2, false, 10);
+            //obstacleSmall2.AddComponent(obstacleSmall2Collider);
 
-            sceneManager.ActiveScene.Add(obstacleSmall2);
+            //sceneManager.ActiveScene.Add(obstacleSmall2);
+
+            obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleSmallCollider.AddPrimitive(
+                new Box(
+                obstacleSmall.Transform.Translation,
+                obstacleSmall.Transform.Rotation,
+                obstacleSmall.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleSmallCollider);
+
+            obstacleSmall.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleSmall);
 
             #endregion obstacle2
 
             #region obstacle3
 
-            var obstacleSmall3 = new GameObject("obstacle small 3",
+            obstacleSmall = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
-            obstacleSmall3.Transform = new Transform(new Vector3(3, 3, 3), null,
+            obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
                 new Vector3(-5, 1.5f, -750));  //World
-            obstacleSmall3.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+            obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            var obstacleSmall3Collider = new Collider(obstacleSmall3, true);
-            obstacleSmall3Collider.AddPrimitive(new Box(
-                obstacleSmall3.Transform.Translation,
-                obstacleSmall3.Transform.Rotation,
-                obstacleSmall3.Transform.Scale),
-                new MaterialProperties(0.8f, 0.8f, 0.7f));
-            obstacleSmall3Collider.Enable(obstacleSmall3, false, 10);
-            obstacleSmall3.AddComponent(obstacleSmall3Collider);
+            //var obstacleSmall3Collider = new Collider(obstacleSmall3, true);
+            //obstacleSmall3Collider.AddPrimitive(new Box(
+            //    obstacleSmall3.Transform.Translation,
+            //    obstacleSmall3.Transform.Rotation,
+            //    obstacleSmall3.Transform.Scale),
+            //    new MaterialProperties(0.8f, 0.8f, 0.7f));
+            //obstacleSmall3Collider.Enable(obstacleSmall3, false, 10);
+            //obstacleSmall3.AddComponent(obstacleSmall3Collider);
 
-            sceneManager.ActiveScene.Add(obstacleSmall3);
+            //sceneManager.ActiveScene.Add(obstacleSmall3);
+
+            obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleSmallCollider.AddPrimitive(
+                new Box(
+                obstacleSmall.Transform.Translation,
+                obstacleSmall.Transform.Rotation,
+                obstacleSmall.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleSmallCollider);
+
+            obstacleSmall.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleSmall);
 
             #endregion obstacle3
         }

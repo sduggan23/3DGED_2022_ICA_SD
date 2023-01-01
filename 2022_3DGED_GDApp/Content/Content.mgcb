@@ -100,6 +100,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Level/gridblue.png
 
+#begin Assets/Textures/Level/gridblue200%.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Level/gridblue200%.png
+
 #begin Assets/Textures/Level/gridpurple.jpg
 /importer:TextureImporter
 /processor:TextureProcessor

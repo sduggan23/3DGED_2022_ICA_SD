@@ -34,6 +34,7 @@ namespace GD.App
             {
                 object[] parameters = { "Explode" };
                 EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPlay2D, parameters));
+                EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
 
                 //collided = true;
             }

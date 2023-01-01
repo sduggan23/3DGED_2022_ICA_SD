@@ -440,7 +440,7 @@ namespace GD.App
                  new Vector3(0.1f, 0, 0),
                  false));
 
-            var soundFX = Content.Load<SoundEffect>("Assets/Audio/Diegetic/explode1");
+            var soundFX = Content.Load<SoundEffect>("Assets/Audio/Diegetic/superphat__scifiheavyblastershot");
             //Add the new sound for background
             soundManager.Add(new Cue(
                 "Explode",

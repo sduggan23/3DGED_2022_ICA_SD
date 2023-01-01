@@ -43,6 +43,12 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/Spaceship Engine 2.wav
 
+#begin Assets/Audio/Diegetic/superphat__scifiheavyblastershot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Diegetic/superphat__scifiheavyblastershot.wav
+
 #begin Assets/Audio/Non-Digetic/cigaro30__synthwave-beat.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

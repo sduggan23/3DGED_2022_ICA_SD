@@ -673,7 +673,7 @@ namespace GD.App
             wall.Transform = new Transform
                 (new Vector3(1, 10f, 1000),
                 new Vector3(0, 0, 30),
-                new Vector3(15f, 5f, -350));
+                new Vector3(15f, 5f, -500));
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -695,7 +695,7 @@ namespace GD.App
             wall.Transform = new Transform
                 (new Vector3(1, 10f, 1000),
                 null,
-                new Vector3(15f, 5f, -350));
+                new Vector3(15f, 5f, -500));
             texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -721,7 +721,7 @@ namespace GD.App
             wall.Transform = new Transform
                 (new Vector3(1, 10f, 1000),
                 new Vector3(0, 0, -30),
-                new Vector3(-15f, 5f, -350));
+                new Vector3(-15f, 5f, -500));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -742,7 +742,7 @@ namespace GD.App
             wall.Transform = new Transform
                 (new Vector3(1, 10f, 1000),
                 null,
-                new Vector3(-15f, 5f, -350));
+                new Vector3(-15f, 5f, -500));
             texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -768,7 +768,7 @@ namespace GD.App
             ceiling.Transform = new Transform
                 (new Vector3(1, 30f, 1000),
                 new Vector3(0, 0, 90),
-                new Vector3(0, 9.5f, -350));
+                new Vector3(0, 9.5f, -500));
 
             ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -793,7 +793,7 @@ namespace GD.App
             floor.Transform = new Transform
                 (new Vector3(1, 40f, 1000),
                 new Vector3(0, 0, 90),
-                new Vector3(0, -.45f, -350));
+                new Vector3(0, -.45f, -500));
 
             floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -815,10 +815,15 @@ namespace GD.App
         private void InitializeCollidableObstacles()
         {
             #region obstacle1
+
+            Random rnd = new Random();
+            int num1X = rnd.Next(-5,5);
+            int num1Z = rnd.Next(-450, -250);
+
             var obstacleSmall = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
-                new Vector3(0, 1.5f, -500));  //World
+                new Vector3(num1X, 1.5f, num1Z));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridred");
             obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -853,10 +858,12 @@ namespace GD.App
             #endregion obstacle1
 
             #region obstacle2
+            int num2X = rnd.Next(-7, 7);
+            int num2Z = rnd.Next(-700, -500);
             obstacleSmall = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
-                new Vector3(5, 1.5f, -750));  //World
+                new Vector3(num2X, 1.5f, num2Z));  //World
             obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
@@ -890,11 +897,12 @@ namespace GD.App
             #endregion obstacle2
 
             #region obstacle3
-
+            int num3X = rnd.Next(-7, 7);
+            int num3Z = rnd.Next(-900, -750);
             obstacleSmall = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
-                new Vector3(-5, 1.5f, -750));  //World
+                new Vector3(num3X, 1.5f, num3Z));  //World
             obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 

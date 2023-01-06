@@ -407,6 +407,37 @@ namespace GD.App
             #endregion
         }
 
+        private void InitializeDistanceMeter()
+        {
+            //intialize the utility component
+            var perfUtility = new PerfUtility(this, _spriteBatch,
+                new Vector2(20, 20),
+                new Vector2(0, 22));
+
+            //set the font to be used
+            var spriteFont = Content.Load<SpriteFont>("Assets/Fonts/Audiowide-Regular");
+
+            //add components to the info list to add UI information
+            float headingScale = 1f;
+            float contentScale = 2f;
+            perfUtility.infoList.Add(new TextInfo(_spriteBatch, spriteFont, "Reach 1000 To Complete the Level", Color.Yellow, headingScale * Vector2.One));
+
+            var infoFunction = (Transform transform) =>
+            {
+                return transform.Translation.GetNewRounded(0).Z.ToString();
+
+            };
+
+            perfUtility.infoList.Add(new TransformInfo(_spriteBatch, spriteFont, "Distance:", Color.White, contentScale * Vector2.One,
+                ref Application.CameraManager.ActiveCamera.transform, infoFunction));
+
+
+            //add to the component list otherwise it wont have its Update or Draw called!
+            // perfUtility.StatusType = StatusType.Drawn | StatusType.Updated;
+            perfUtility.DrawOrder = 3;
+            Components.Add(perfUtility);
+        }
+
         private void SetTitle(string title)
         {
             Window.Title = title.Trim();
@@ -1315,6 +1346,7 @@ namespace GD.App
 
             if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false)
             {
+                InitializeDistanceMeter();
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
                 hasbeenPressed = true;
             }

@@ -55,6 +55,13 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/Non-Digetic/cigaro30__synthwave-beat.wav
 
+#begin Assets/Fonts/Audiowide-Regular.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Assets/Fonts/Audiowide-Regular.spritefont
+
 #begin Assets/Fonts/menu.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

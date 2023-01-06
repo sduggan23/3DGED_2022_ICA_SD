@@ -23,10 +23,16 @@ namespace GD.Engine
             {
                 //use target position + offset to generate new camera position
                 var newPosition = target.Transform.Translation
-                    + new Vector3(0, 3.5f, 15);
+                    + new Vector3(0, 3.5f, -15);
+
+                var newRotation = target.Transform.Rotation
+                    + new Vector3(0, 180, 0);
+
 
                 //set new camera position
                 transform.SetTranslation(newPosition);
+
+                transform.SetRotation(newRotation);
             }
 
             //since parent Update does nothing then dont bother calling it

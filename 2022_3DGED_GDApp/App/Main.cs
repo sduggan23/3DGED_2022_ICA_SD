@@ -16,10 +16,12 @@ using GD.Engine.Parameters;
 using GD.Engine.Utilities;
 using JigLibX.Collision;
 using JigLibX.Geometry;
+using JigLibX.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Text;
 using Application = GD.Engine.Globals.Application;
 using Cue = GD.Engine.Managers.Cue;
 using Keys = Microsoft.Xna.Framework.Input.Keys;
@@ -203,16 +205,6 @@ namespace GD.App
             EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
 
             #endregion
-
-            #region Background Audio
-
-            //object[] parameters = { "BGMusic" };
-            //EventDispatcher.Raise(
-            //    new EventData(EventCategoryType.Player,
-            //    EventActionType.OnPlay,
-            //    parameters));
-
-            #endregion Background Audio
 
         }
 
@@ -430,6 +422,16 @@ namespace GD.App
 
         private void LoadSounds()
         {
+            #region Background Audio
+
+            object[] parameters = { "BGMusic" };
+            EventDispatcher.Raise(
+                new EventData(EventCategoryType.Player,
+                EventActionType.OnPlay,
+                parameters));
+
+            #endregion Background Audio
+
             var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
 
             //Add the new sound for background
@@ -438,7 +440,7 @@ namespace GD.App
                  soundEffect,
                  SoundCategoryType.Alarm,
                  new Vector3(0.1f, 0, 0),
-                 false));
+                 true));
 
             var soundFX = Content.Load<SoundEffect>("Assets/Audio/Diegetic/superphat__scifiheavyblastershot");
             //Add the new sound for background
@@ -474,10 +476,7 @@ namespace GD.App
             //load and add to dictionary
         }
 
-        private void InitializeCurves()
-        {
-            //load and add to dictionary
-        }
+        
 
         private void InitializeRails()
         {
@@ -509,6 +508,45 @@ namespace GD.App
             litEffect.EnableDefaultLighting();
         }
 
+        private void InitializeCurves()
+        {
+            //load and add to dictionary
+            #region Curve
+            //camera
+            GameObject cameraGameObject = null;
+
+            Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
+            curve3D.Add(new Vector3(-12, 1, -125), 0);
+            curve3D.Add(new Vector3(12, 7.5f, -100), 5000);
+            curve3D.Add(new Vector3(-12, 7, -50), 10000);
+            curve3D.Add(new Vector3(0, 4.25F, 0), 15000);
+
+
+            cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
+            cameraGameObject.Transform =
+                new Transform(null, new Vector3(0, 180, 0), null);
+            cameraGameObject.AddComponent(new Camera(
+                MathHelper.PiOver2 / 2,
+                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
+                0.1f, 3500,
+                  new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
+
+            //define what action the curve will apply to the target game object
+            var curveAction = (Curve3D curve, GameObject target, GameTime gameTime) =>
+            {
+                target.Transform.SetTranslation(curve.Evaluate(gameTime.TotalGameTime.TotalMilliseconds, 4));
+            };
+
+            cameraGameObject.AddComponent(new CurveBehaviour(curve3D, curveAction));
+
+            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
+
+
+            cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
+
+            #endregion Curve
+        }
+
         private void InitializeCameras()
         {
             //camera
@@ -532,6 +570,7 @@ namespace GD.App
 
             cameraGameObject.AddComponent(new AudioListenerBehaviour());
 
+            //cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
 
             #endregion
 
@@ -591,39 +630,6 @@ namespace GD.App
 
             #endregion First Person
 
-            #region Curve
-
-            Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
-            curve3D.Add(new Vector3(-12, 1, 150), 0);
-            //curve3D.Add(new Vector3(0, 10f, 125), 2500);
-            curve3D.Add(new Vector3(12, 7.5f, 100), 5000);
-            //curve3D.Add(new Vector3(0, 7.5f, 75), 7500);
-            curve3D.Add(new Vector3(-12, 7, 50), 10000);
-            //curve3D.Add(new Vector3(0, 5.5F, 25), 12500);
-            curve3D.Add(new Vector3(0, 4.25F, 15), 15000);
-
-            cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
-            cameraGameObject.Transform =
-                new Transform(null, null, null);
-            cameraGameObject.AddComponent(new Camera(
-                MathHelper.PiOver2 / 2,
-                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
-                0.1f, 3500,
-                  new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
-
-            //define what action the curve will apply to the target game object
-            var curveAction = (Curve3D curve, GameObject target, GameTime gameTime) =>
-            {
-                target.Transform.SetTranslation(curve.Evaluate(gameTime.TotalGameTime.TotalMilliseconds, 4));
-            };
-
-            cameraGameObject.AddComponent(new CurveBehaviour(curve3D, curveAction));
-
-            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
-
-            #endregion Curve
-
-            cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
         }
 
         private void InitializeCollidableContent(float worldScale)
@@ -671,9 +677,9 @@ namespace GD.App
             var wall = new GameObject("Collidable wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1000),
+                (new Vector3(1, 10f, 1250),
                 new Vector3(0, 0, 30),
-                new Vector3(15f, 5f, -500));
+                new Vector3(15f, 5f, 500));
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -693,10 +699,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1000),
+                (new Vector3(1, 10f, 1250),
                 null,
-                new Vector3(15f, 5f, -500));
-            texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
+                new Vector3(15f, 5f, 500));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -719,9 +724,9 @@ namespace GD.App
             wall = new GameObject("Collidable wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1000),
+                (new Vector3(1, 10f, 1250),
                 new Vector3(0, 0, -30),
-                new Vector3(-15f, 5f, -500));
+                new Vector3(-15f, 5f, 510));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -740,9 +745,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1000),
+                (new Vector3(1, 10f, 1250),
                 null,
-                new Vector3(-15f, 5f, -500));
+                new Vector3(-15f, 5f, 510));
             texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -766,9 +771,9 @@ namespace GD.App
             var ceiling = new GameObject("Collidable ceiling", ObjectType.Static, RenderType.Opaque);
             ceiling.GameObjectType = GameObjectType.Architecture;
             ceiling.Transform = new Transform
-                (new Vector3(1, 30f, 1000),
+                (new Vector3(1, 30f, 1250),
                 new Vector3(0, 0, 90),
-                new Vector3(0, 9.5f, -500));
+                new Vector3(0, 9.5f, 500));
 
             ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -791,9 +796,9 @@ namespace GD.App
             var floor = new GameObject("Collidable floor", ObjectType.Static, RenderType.Opaque);
             floor.GameObjectType = GameObjectType.Architecture;
             floor.Transform = new Transform
-                (new Vector3(1, 40f, 1000),
+                (new Vector3(1, 40f, 1250),
                 new Vector3(0, 0, 90),
-                new Vector3(0, -.45f, -500));
+                new Vector3(0, -.45f, 510));
 
             floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -818,7 +823,7 @@ namespace GD.App
 
             Random rnd = new Random();
             int num1X = rnd.Next(-5,5);
-            int num1Z = rnd.Next(-450, -250);
+            int num1Z = rnd.Next(50, 250);
 
             var obstacleSmall = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
@@ -859,7 +864,7 @@ namespace GD.App
 
             #region obstacle2
             int num2X = rnd.Next(-7, 7);
-            int num2Z = rnd.Next(-700, -500);
+            int num2Z = rnd.Next(500, 700);
             obstacleSmall = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -898,7 +903,7 @@ namespace GD.App
 
             #region obstacle3
             int num3X = rnd.Next(-7, 7);
-            int num3Z = rnd.Next(-900, -750);
+            int num3Z = rnd.Next(750, 950);
             obstacleSmall = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -941,7 +946,7 @@ namespace GD.App
             playerGameObject = new GameObject("player 1", ObjectType.Dynamic, RenderType.Opaque);
 
             playerGameObject.Transform = new Transform(null,
-                null, new Vector3(0, 5.75f, 0));
+                null, new Vector3(0, 5, 15));
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/pink");
             playerGameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -960,7 +965,7 @@ namespace GD.App
             playerGameObject.AddComponent(characterCollider);
             characterCollider.AddPrimitive(new Box(
                 playerGameObject.Transform.Translation,
-                playerGameObject.Transform.Translation,
+                playerGameObject.Transform.Rotation,
                  new Vector3(1, 1, 1)),
                 new MaterialProperties(0.2f, 0.8f, 0.7f));
             characterCollider.Enable(playerGameObject, false, 1);
@@ -982,7 +987,7 @@ namespace GD.App
 
         private void InitializeSkyBox(float worldScale)
         {
-            float halfWorldScale = worldScale / 2.0f;
+            float halfWorldScale = worldScale / 1.5f;
 
             GameObject quad = null;
             var gdBasicEffect = new GDBasicEffect(unlitEffect);
@@ -1176,15 +1181,16 @@ namespace GD.App
             #region UI
 
             uiManager = new SceneManager<Scene2D>(this);
-            uiManager.StatusType = StatusType.Off;
+            uiManager.StatusType = StatusType.Drawn | StatusType.Updated;
             uiManager.IsPausedOnPlay = false;
             Components.Add(uiManager);
 
             var uiRenderManager = new Render2DManager(this, _spriteBatch, uiManager);
-            uiRenderManager.StatusType = StatusType.Off;
+            uiRenderManager.StatusType = StatusType.Drawn | StatusType.Updated;
             uiRenderManager.DrawOrder = 2;
             uiRenderManager.IsPausedOnPlay = false;
             Components.Add(uiRenderManager);
+
 
             #endregion
 
@@ -1305,8 +1311,15 @@ namespace GD.App
             #endregion
 
             #region Demo - Camera switching
+            bool hasbeenPressed = false;
 
-            if (Input.Keys.IsPressed(Keys.F1))
+            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false)
+            {
+                cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
+                hasbeenPressed = true;
+            }
+
+            else if (Input.Keys.IsPressed(Keys.F1))
                 cameraManager.SetActiveCamera(AppData.FIRST_PERSON_CAMERA_NAME);
             else if (Input.Keys.IsPressed(Keys.F2))
                 cameraManager.SetActiveCamera(AppData.SECURITY_CAMERA_NAME);
@@ -1314,14 +1327,13 @@ namespace GD.App
                 cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
             else if (Input.Keys.IsPressed(Keys.F4))
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
-            else if (Input.Keys.IsPressed(Keys.W))
-                cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
 
-            #endregion Demo - Camera switching
 
-            #region Demo - Gamepad
+                #endregion Demo - Camera switching
 
-            var thumbsL = Input.Gamepad.ThumbSticks(false);
+                #region Demo - Gamepad
+
+                var thumbsL = Input.Gamepad.ThumbSticks(false);
             //   System.Diagnostics.Debug.WriteLine(thumbsL);
 
             var thumbsR = Input.Gamepad.ThumbSticks(false);

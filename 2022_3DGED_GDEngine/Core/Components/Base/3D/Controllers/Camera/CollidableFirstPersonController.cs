@@ -70,13 +70,13 @@ namespace GD.Engine
             {
                 restrictedLook = transform.World.Forward; //we use Up instead of Forward
                 restrictedLook.Y = 0;
-                characterBody.Velocity += moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
+                characterBody.Velocity -= moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
             }
             else if (Input.Keys.IsPressed(Keys.S))
             {
                 restrictedLook = transform.World.Forward;
                 restrictedLook.Y = 0;
-                characterBody.Velocity -= moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
+                characterBody.Velocity += moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
             }
             else
             {
@@ -90,13 +90,13 @@ namespace GD.Engine
             {
                 restrictedRight = transform.World.Right;
                 restrictedRight.Y = 0;
-                characterBody.Velocity -= strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
+                characterBody.Velocity += strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
             }
             else if (Input.Keys.IsPressed(Keys.D))
             {
                 restrictedRight = transform.World.Right;
                 restrictedRight.Y = 0;
-                characterBody.Velocity += strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
+                characterBody.Velocity -= strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
             }
             else
             {

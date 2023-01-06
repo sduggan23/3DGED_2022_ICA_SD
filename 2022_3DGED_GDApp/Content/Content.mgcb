@@ -592,6 +592,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Skybox/Tron/tron_up.png
 
+#begin Assets/Textures/UI/progress_white.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/UI/progress_white.png
+
 #begin Assets/Textures/UI/white32x32_transparent.png
 /importer:TextureImporter
 /processor:TextureProcessor

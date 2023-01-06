@@ -144,15 +144,7 @@ namespace GD.App
             InitializeEngine(AppData.APP_RESOLUTION, true, true);
 
             //game specific content
-            InitializeLevel("My Amazing Game", AppData.SKYBOX_WORLD_SCALE);
-
-//#if SHOW_DEBUG_INFO
-//            InitializeDebug();
-//#endif
-
-#if DEMO
-            DemoCode();
-#endif
+            InitializeLevel("Runner", AppData.SKYBOX_WORLD_SCALE);
 
             base.Initialize();
         }
@@ -171,18 +163,20 @@ namespace GD.App
         {
             //set game title
             SetTitle(title);
+            EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
 
             //load sounds, textures, models etc
             LoadMediaAssets();
 
-            //initialize curves used by cameras
-            InitializeCurves();
-
-            //initialize rails used by cameras
-            InitializeRails();
+            //add UI and menu
+            InitializeUI();
+            InitializeMenu();
 
             //add scene manager and starting scenes
             InitializeScenes();
+
+            //initialize curves used by cameras
+            InitializeCurves();
 
             //add collidable drawn stuff
             InitializeCollidableContent(worldScale);
@@ -192,24 +186,29 @@ namespace GD.App
 
             //add the player
             InitializePlayer();
+        }
 
-            //add UI and menu
-            InitializeUI();
-            InitializeMenu();
+        private void SetTitle(string title)
+        {
+            Window.Title = title.Trim();
+        }
 
-            //send all initial events
+        private void InitializeEffects()
+        {
+            //only for skybox with lighting disabled
+            unlitEffect = new BasicEffect(_graphics.GraphicsDevice);
+            unlitEffect.TextureEnabled = true;
 
-            #region Start Events - Menu etc
-
-            //start the game paused
-            EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
-
-            #endregion
-
+            //all other drawn objects
+            litEffect = new BasicEffect(_graphics.GraphicsDevice);
+            litEffect.TextureEnabled = true;
+            litEffect.LightingEnabled = true;
+            litEffect.EnableDefaultLighting();
         }
 
         private void InitializeMenu()
         {
+            #region Menu Variables
             GameObject menuGameObject = null;
             Material2D material = null;
             Renderer2D renderer2D = null;
@@ -217,6 +216,8 @@ namespace GD.App
             Texture2D backGroundtexture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/exitmenuwithtrans");
             SpriteFont spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
             Vector2 btnScale = new Vector2(0.8f, 0.8f);
+
+            #endregion Menu Variables
 
             #region Create new menu scene
 
@@ -356,11 +357,14 @@ namespace GD.App
 
         private void InitializeUI()
         {
+            #region UI Variables
             GameObject uiGameObject = null;
             Material2D material = null;
             Texture2D texture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/progress_white");
 
             var mainHUD = new Scene2D("game HUD");
+
+            #endregion UI Variables
 
             #region Add UI Element
 
@@ -371,25 +375,7 @@ namespace GD.App
                 new Vector3(_graphics.PreferredBackBufferWidth - texture.Width - 20,
                 20, 0)); //t
 
-            #region texture
 
-            //material and renderer
-            material = new TextureMaterial2D(texture, Color.White);
-            uiGameObject.AddComponent(new Renderer2D(material));
-
-            #endregion
-
-            #region progress controller
-
-            uiGameObject.AddComponent(new UIProgressBarController(5, 10));
-
-            #endregion
-
-            #region color change behaviour
-
-            uiGameObject.AddComponent(new UIColorFlipOnTimeBehaviour(Color.White, Color.Green, 500));
-
-            #endregion
 
             //add to scene2D
             mainHUD.Add(uiGameObject);
@@ -438,17 +424,9 @@ namespace GD.App
             Components.Add(perfUtility);
         }
 
-        private void SetTitle(string title)
-        {
-            Window.Title = title.Trim();
-        }
-
         private void LoadMediaAssets()
         {
-            //sounds, models, textures
             LoadSounds();
-            LoadTextures();
-            LoadModels();
         }
 
         private void LoadSounds()
@@ -461,7 +439,19 @@ namespace GD.App
                 EventActionType.OnPlay,
                 parameters));
 
+            var sound = Content.Load<SoundEffect>("Assets/Audio/Non-Digetic/cigaro30__synthwave-beat");
+
+            //Add the new sound for background
+            soundManager.Add(new Cue(
+                "BGMusic",
+                 sound,
+                 SoundCategoryType.BackgroundMusic,
+                 new Vector3(0.1f, 0, 0),
+                 true));
+
             #endregion Background Audio
+
+            #region SoundEffects
 
             var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
 
@@ -473,84 +463,41 @@ namespace GD.App
                  new Vector3(0.1f, 0, 0),
                  true));
 
-            var soundFX = Content.Load<SoundEffect>("Assets/Audio/Diegetic/superphat__scifiheavyblastershot");
+            soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/superphat__scifiheavyblastershot");
             //Add the new sound for background
             soundManager.Add(new Cue(
                 "Explode",
-                 soundFX,
+                 soundEffect,
                  SoundCategoryType.Alarm,
                  new Vector3(0.1f, 0, 0),
                  false));
 
+            #endregion SoundEffects
 
-            var sound = Content.Load<SoundEffect>("Assets/Audio/Non-Digetic/cigaro30__synthwave-beat");
-
-            //Add the new sound for background
-            soundManager.Add(new Cue(
-                "BGMusic",
-                 sound,
-                 SoundCategoryType.BackgroundMusic,
-                 new Vector3(0.1f, 0, 0),
-                 true));
-
-
-        }
-
-        private void LoadTextures()
-        {
-            //load and add to dictionary
-            //Content.Load<Texture>
-        }
-
-        private void LoadModels()
-        {
-            //load and add to dictionary
-        }
-
-        
-
-        private void InitializeRails()
-        {
-            //load and add to dictionary
         }
 
         private void InitializeScenes()
         {
             //initialize a scene
-            var scene = new Scene("labyrinth");
+            var scene = new Scene("level01");
 
             //add scene to the scene manager
             sceneManager.Add(scene.ID, scene);
 
             //don't forget to set active scene
-            sceneManager.SetActiveScene("labyrinth");
-        }
-
-        private void InitializeEffects()
-        {
-            //only for skybox with lighting disabled
-            unlitEffect = new BasicEffect(_graphics.GraphicsDevice);
-            unlitEffect.TextureEnabled = true;
-
-            //all other drawn objects
-            litEffect = new BasicEffect(_graphics.GraphicsDevice);
-            litEffect.TextureEnabled = true;
-            litEffect.LightingEnabled = true;
-            litEffect.EnableDefaultLighting();
+            sceneManager.SetActiveScene("level01");
         }
 
         private void InitializeCurves()
         {
-            //load and add to dictionary
-            #region Curve
             //camera
             GameObject cameraGameObject = null;
 
             Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
             curve3D.Add(new Vector3(-12, 1, -125), 0);
-            curve3D.Add(new Vector3(12, 7.5f, -100), 5000);
-            curve3D.Add(new Vector3(-12, 7, -50), 10000);
-            curve3D.Add(new Vector3(0, 4.25F, 0), 15000);
+            curve3D.Add(new Vector3(12, 7.5f, -100), 2500);
+            curve3D.Add(new Vector3(-12, 7, -50), 5000);
+            curve3D.Add(new Vector3(0, 4.25F, 0), 7500);
 
 
             cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
@@ -575,7 +522,6 @@ namespace GD.App
 
             cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
 
-            #endregion Curve
         }
 
         private void InitializeCameras()
@@ -668,13 +614,12 @@ namespace GD.App
             InitializeCollidableGround(worldScale);
             InitializeCollidableLevel();
             InitializeCollidableObstacles();
+            InitializeFinishLineTrigger();
         }
 
         private void InitializeNonCollidableContent(float worldScale)
         {
-            //create sky
             InitializeSkyBox(worldScale);
-
         }
 
         private void InitializeCollidableGround(float worldScale)
@@ -971,6 +916,39 @@ namespace GD.App
 
             #endregion obstacle3
         }
+
+        private void InitializeFinishLineTrigger()
+        {
+            #region finish line
+
+            var finishLine = new GameObject("finish line",
+                ObjectType.Static, RenderType.Opaque);
+            finishLine.Transform = new Transform(new Vector3(14, 10, 1), null,
+                new Vector3(0, 5, 100));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/checker");
+            finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            Collider obstacleSmallCollider = new ObstacleCollider(finishLine, true, false);
+            obstacleSmallCollider.AddPrimitive(
+                new Box(
+                finishLine.Transform.Translation,
+                finishLine.Transform.Rotation,
+                finishLine.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleSmallCollider.Enable(finishLine, false, 10);
+            finishLine.AddComponent(obstacleSmallCollider);
+
+            finishLine.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(finishLine);
+
+            #endregion obstacle1
+        }
+
+
 
         private void InitializePlayer()
         {
@@ -1344,7 +1322,7 @@ namespace GD.App
             #region Demo - Camera switching
             bool hasbeenPressed = false;
 
-            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false)
+            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false && Application.CameraManager.ActiveCamera.transform.Translation.Z >=-1)
             {
                 InitializeDistanceMeter();
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
@@ -1382,7 +1360,7 @@ namespace GD.App
                 object[] parameters = { "Engine" };
                 EventDispatcher.Raise(
                     new EventData(EventCategoryType.Player,
-                    EventActionType.OnPlay2D,
+                    EventActionType.OnPlay3D,
                     parameters));
 
             }

@@ -66,7 +66,10 @@ namespace GD.Engine
 
         protected override void HandleKeyboardInput(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.W))//&& Input.Keys.IsPressed(Keys.LeftControl))
+
+           
+            if (Input.Keys.IsPressed(Keys.W) && Application.CameraManager.ActiveCamera.transform.Translation.Z >= -1)//&& Input.Keys.IsPressed(Keys.LeftControl))
+
             {
                 restrictedLook = transform.World.Forward; //we use Up instead of Forward
                 restrictedLook.Y = 0;

@@ -1,4 +1,5 @@
-﻿using GD.Engine;
+﻿using GD.App;
+using GD.Engine;
 using GD.Engine.Globals;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -75,7 +76,7 @@ namespace GD.Engine
                 restrictedLook.Y = 0;
                 characterBody.Velocity -= moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
             }
-            else if (Input.Keys.IsPressed(Keys.S))
+            else if (Input.Keys.IsPressed(Keys.S) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -1)
             {
                 restrictedLook = transform.World.Forward;
                 restrictedLook.Y = 0;
@@ -89,13 +90,13 @@ namespace GD.Engine
 
         private void HandleStrafe(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.A))
+            if (Input.Keys.IsPressed(Keys.A) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -1)
             {
                 restrictedRight = transform.World.Right;
                 restrictedRight.Y = 0;
                 characterBody.Velocity += strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
             }
-            else if (Input.Keys.IsPressed(Keys.D))
+            else if (Input.Keys.IsPressed(Keys.D) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -1)
             {
                 restrictedRight = transform.World.Right;
                 restrictedRight.Y = 0;
@@ -109,7 +110,7 @@ namespace GD.Engine
 
         private void HandleJump(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.Space))
+            if (Input.Keys.IsPressed(Keys.Space) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -1)
                 characterBody.DoJump(jumpHeight);
         }
 

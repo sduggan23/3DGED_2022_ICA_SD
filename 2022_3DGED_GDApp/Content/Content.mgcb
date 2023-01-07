@@ -19,23 +19,17 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/AbstractSpaceshipA01_Flat.wav
 
+#begin Assets/Audio/Diegetic/copyc4t__levelup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Assets/Audio/Diegetic/copyc4t__levelup.wav
+
 #begin Assets/Audio/Diegetic/Engine Hum.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/Engine Hum.wav
-
-#begin Assets/Audio/Diegetic/explode1.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Assets/Audio/Diegetic/explode1.mp3
-
-#begin Assets/Audio/Diegetic/smokealarm1.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Assets/Audio/Diegetic/smokealarm1.ogg
 
 #begin Assets/Audio/Diegetic/Spaceship Engine 2.wav
 /importer:WavImporter
@@ -95,7 +89,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Assets/Models/sphere.FBX
 
-#begin Assets/Textures/Level/checker.png
+#begin Assets/Textures/Level/checkerpattern.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -105,7 +99,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Level/checker.png
+/build:Assets/Textures/Level/checkerpattern.png
 
 #begin Assets/Textures/Level/gridblue.png
 /importer:TextureImporter

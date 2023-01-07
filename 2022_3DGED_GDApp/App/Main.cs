@@ -472,6 +472,15 @@ namespace GD.App
                  new Vector3(0.1f, 0, 0),
                  false));
 
+            soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/copyc4t__levelup");
+            //Add the new sound for background
+            soundManager.Add(new Cue(
+                "LevelComplete",
+                 soundEffect,
+                 SoundCategoryType.Alarm,
+                 new Vector3(0.1f, 0, 0),
+                 false));
+
             #endregion SoundEffects
 
         }
@@ -480,6 +489,12 @@ namespace GD.App
         {
             //initialize a scene
             var scene = new Scene("level01");
+
+            //add scene to the scene manager
+            sceneManager.Add(scene.ID, scene);
+
+            //initialize a scene
+            scene = new Scene("level02");
 
             //add scene to the scene manager
             sceneManager.Add(scene.ID, scene);
@@ -809,17 +824,6 @@ namespace GD.App
             obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            //var obstacleSmall1Collider = new Collider(obstacleSmall1, true);
-            //obstacleSmall1Collider.AddPrimitive(new Box(
-            //    obstacleSmall1.Transform.Translation,
-            //    obstacleSmall1.Transform.Rotation,
-            //    obstacleSmall1.Transform.Scale),
-            //    new MaterialProperties(0.8f, 0.8f, 0.7f));
-            //obstacleSmall1Collider.Enable(obstacleSmall1, false, 10);
-            //obstacleSmall1.AddComponent(obstacleSmall1Collider);
-
-            //sceneManager.ActiveScene.Add(obstacleSmall1);
-
             Collider obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
             obstacleSmallCollider.AddPrimitive(
                 new Box(
@@ -923,14 +927,14 @@ namespace GD.App
 
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
-            finishLine.Transform = new Transform(new Vector3(14, 10, 1), null,
+            finishLine.Transform = new Transform(new Vector3(29, 10, 1), null,
                 new Vector3(0, 5, 100));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Level/checker");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            Collider obstacleSmallCollider = new ObstacleCollider(finishLine, true, false);
-            obstacleSmallCollider.AddPrimitive(
+            Collider levelCompleteTrigger = new LevelCompleteTrigger(finishLine, true, false);
+            levelCompleteTrigger.AddPrimitive(
                 new Box(
                 finishLine.Transform.Translation,
                 finishLine.Transform.Rotation,
@@ -938,17 +942,15 @@ namespace GD.App
                 new MaterialProperties(0.8f, 0.8f, 0.7f)
                 );
 
-            obstacleSmallCollider.Enable(finishLine, false, 10);
-            finishLine.AddComponent(obstacleSmallCollider);
+            levelCompleteTrigger.Enable(finishLine, false, 10);
+            finishLine.AddComponent(levelCompleteTrigger);
 
             finishLine.AddComponent(new AudioEmitterBehaviour());
 
             sceneManager.ActiveScene.Add(finishLine);
 
-            #endregion obstacle1
+            #endregion finish line
         }
-
-
 
         private void InitializePlayer()
         {

@@ -20,12 +20,12 @@ namespace GD.App
 
         protected override void HandleResponse(GameObject parentGameObject)
         {
-            CollidableFirstPersonController controller = parentGameObject.GetComponent<CollidableFirstPersonController>();
+            Player controller = parentGameObject.GetComponent<Player>();
 
             if (controller == null)
             {
                 if (parentGameObject.Name == AppData.THIRD_PERSON_CAMERA_NAME)
-                    System.Diagnostics.Debug.WriteLine("CollidableFirstPersonController not found.");
+                    System.Diagnostics.Debug.WriteLine("Player not found.");
                 return;
             }
 

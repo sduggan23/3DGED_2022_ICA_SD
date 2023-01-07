@@ -813,7 +813,7 @@ namespace GD.App
             #region obstacle1
 
             Random rnd = new Random();
-            int num1X = rnd.Next(-5,5);
+            int num1X = rnd.Next(-5, 5);
             int num1Z = rnd.Next(50, 250);
 
             var obstacleSmall = new GameObject("obstacle small 1",
@@ -985,10 +985,10 @@ namespace GD.App
 
             #region Collision - Add Controller for movement (now with collision)
 
-            playerGameObject.AddComponent(new CollidableFirstPersonController(playerGameObject,
+            playerGameObject.AddComponent(new Player(playerGameObject,
                 characterCollider,
                 AppData.THIRD_PERSON_MOVE_SPEED, AppData.THIRD_PERSON_STRAFE_SPEED,
-                new Vector2(0,0), AppData.THIRD_PERSON_CAMERA_SMOOTH_FACTOR, true,
+                new Vector2(0, 0), AppData.THIRD_PERSON_CAMERA_SMOOTH_FACTOR, true,
                 AppData.PLAYER_COLLIDABLE_JUMP_HEIGHT));
 
             #endregion
@@ -1324,7 +1324,7 @@ namespace GD.App
             #region Demo - Camera switching
             bool hasbeenPressed = false;
 
-            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false && Application.CameraManager.ActiveCamera.transform.Translation.Z >=-1)
+            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false && Application.CameraManager.ActiveCamera.transform.Translation.Z >= -1)
             {
                 InitializeDistanceMeter();
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
@@ -1341,11 +1341,11 @@ namespace GD.App
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
 
 
-                #endregion Demo - Camera switching
+            #endregion Demo - Camera switching
 
-                #region Demo - Gamepad
+            #region Demo - Gamepad
 
-                var thumbsL = Input.Gamepad.ThumbSticks(false);
+            var thumbsL = Input.Gamepad.ThumbSticks(false);
             //   System.Diagnostics.Debug.WriteLine(thumbsL);
 
             var thumbsR = Input.Gamepad.ThumbSticks(false);

@@ -1,4 +1,5 @@
-﻿using GD.Engine;
+﻿using GD.App;
+using GD.Engine;
 using GD.Engine.Globals;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -9,7 +10,7 @@ namespace GD.Engine
     /// <summary>
     /// Adds collidable 1st person controller to camera using keyboard and mouse input
     /// </summary>
-    public class CollidableFirstPersonController : FirstPersonController
+    public class Player : FirstPersonController
     {
         #region Statics
 
@@ -30,7 +31,7 @@ namespace GD.Engine
 
         #region Contructors
 
-        public CollidableFirstPersonController(GameObject gameObject,
+        public Player(GameObject gameObject,
             CharacterCollider characterCollider,
             float moveSpeed,
             float strafeSpeed, Vector2 rotationSpeed,
@@ -66,15 +67,12 @@ namespace GD.Engine
 
         protected override void HandleKeyboardInput(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.W))//&& Input.Keys.IsPressed(Keys.LeftControl))
+
+
+            if (Input.Keys.IsPressed(Keys.Up) && Application.CameraManager.ActiveCamera.transform.Translation.Z >= -0.5f)//&& Input.Keys.IsPressed(Keys.LeftControl))
+
             {
                 restrictedLook = transform.World.Forward; //we use Up instead of Forward
-                restrictedLook.Y = 0;
-                characterBody.Velocity += moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
-            }
-            else if (Input.Keys.IsPressed(Keys.S))
-            {
-                restrictedLook = transform.World.Forward;
                 restrictedLook.Y = 0;
                 characterBody.Velocity -= moveSpeed * restrictedLook * gameTime.ElapsedGameTime.Milliseconds;
             }
@@ -86,17 +84,17 @@ namespace GD.Engine
 
         private void HandleStrafe(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.A))
-            {
-                restrictedRight = transform.World.Right;
-                restrictedRight.Y = 0;
-                characterBody.Velocity -= strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
-            }
-            else if (Input.Keys.IsPressed(Keys.D))
+            if (Input.Keys.IsPressed(Keys.Left) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -0.5f)
             {
                 restrictedRight = transform.World.Right;
                 restrictedRight.Y = 0;
                 characterBody.Velocity += strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
+            }
+            else if (Input.Keys.IsPressed(Keys.Right) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -0.5f)
+            {
+                restrictedRight = transform.World.Right;
+                restrictedRight.Y = 0;
+                characterBody.Velocity -= strafeSpeed * restrictedRight * gameTime.ElapsedGameTime.Milliseconds;
             }
             else
             {
@@ -106,7 +104,7 @@ namespace GD.Engine
 
         private void HandleJump(GameTime gameTime)
         {
-            if (Input.Keys.IsPressed(Keys.Space))
+            if (Input.Keys.IsPressed(Keys.Space) && Application.CameraManager.ActiveCameraTransform.Translation.Z >= -1)
                 characterBody.DoJump(jumpHeight);
         }
 

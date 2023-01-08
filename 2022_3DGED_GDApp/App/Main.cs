@@ -136,8 +136,9 @@ namespace GD.App
         private void InitializeEvents()
         {
             EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
+            EventDispatcher.Subscribe(EventCategoryType.Menu, HandleEnterLevelCompleteUI);
             EventDispatcher.Subscribe(EventCategoryType.Menu, HandleEnterLevelFailedUI);
-            EventDispatcher.Subscribe(EventCategoryType.Menu, HandleExitLevelFailedUI);
+            EventDispatcher.Subscribe(EventCategoryType.Menu, HandleExitLevel);
         }
 
 #endif
@@ -219,7 +220,15 @@ namespace GD.App
             }
         }
 
-        private void HandleExitLevelFailedUI(EventData eventData)
+        private void HandleEnterLevelCompleteUI(EventData eventData)
+        {
+            if (eventData.EventActionType == EventActionType.OnEnterLevelCompleteUI)
+            {
+                InitializeLevelCompleteUI();
+            }
+        }
+
+        private void HandleExitLevel(EventData eventData)
         {
             if (eventData.EventActionType == EventActionType.OnExit)
             {
@@ -369,6 +378,101 @@ namespace GD.App
 
             //what menu do i see first?
             menuManager.SetActiveScene(mainMenuScene.ID);
+
+            #endregion
+        }
+
+        private void InitializeLevelCompleteUI()
+        {
+            GameObject menuGameObject = null;
+            Material2D material = null;
+            Renderer2D renderer2D = null;
+            Texture2D btnTexture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/genericbtn");
+            Texture2D backGroundtexture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/levelcomplete");
+            SpriteFont spriteFont = Content.Load<SpriteFont>("Assets/Fonts/Audiowide-Regular");
+            Vector2 btnScale = Vector2.One;
+
+            #region Create new menu scene
+
+            //add new main menu scene
+            var levelFailedUI = new Scene2D("level complete UI");
+
+            #endregion
+
+            #region Add Background Texture
+
+            menuGameObject = new GameObject("background");
+            var scaleToWindow = _graphics.GetScaleFactorForResolution(backGroundtexture, Vector2.Zero);
+            //set transform
+            menuGameObject.Transform = new Transform(
+                new Vector3(scaleToWindow, 1), //s
+                new Vector3(0, 0, 0), //r
+                new Vector3(0, 0, 0)); //t
+
+            #region texture
+
+            //material and renderer
+            material = new TextureMaterial2D(backGroundtexture, Color.White, 1);
+            menuGameObject.AddComponent(new Renderer2D(material));
+
+            #endregion
+
+            //add to scene2D
+            levelFailedUI.Add(menuGameObject);
+
+            #endregion
+
+            #region Add Play button and text
+
+            menuGameObject = new GameObject("exit");
+            menuGameObject.Transform = new Transform(
+            new Vector3(btnScale, 1), //s
+            new Vector3(0, 0, 0), //r
+            new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() + new Vector2(-0, 250), 0)); //t
+
+            #region texture
+
+            //material and renderer
+            material = new TextureMaterial2D(btnTexture, Color.White, 0.9f);
+            //add renderer to draw the texture
+            renderer2D = new Renderer2D(material);
+            //add renderer as a component
+            menuGameObject.AddComponent(renderer2D);
+
+            #endregion
+
+            #region collider
+
+            //add bounding box for mouse collisions using the renderer for the texture (which will automatically correctly size the bounding box for mouse interactions)
+            var buttonCollider2D = new ButtonCollider2D(menuGameObject, renderer2D);
+            //add any events on MouseButton (e.g. Left, Right, Hover)
+            buttonCollider2D.AddEvent(MouseButton.Left, new EventData(EventCategoryType.Menu, EventActionType.OnExit));
+            menuGameObject.AddComponent(buttonCollider2D);
+
+            #endregion
+
+            #region text
+
+            //material and renderer
+            material = new TextMaterial2D(spriteFont, "Quit", new Vector2(100, 25), Color.White, 0.8f);
+            //add renderer to draw the text
+            renderer2D = new Renderer2D(material);
+            menuGameObject.AddComponent(renderer2D);
+
+            #endregion
+
+            //add to scene2D
+            levelFailedUI.Add(menuGameObject);
+
+            #endregion
+
+            #region Add Scene to Manager and Set Active
+
+            //add scene2D to menu manager
+            menuManager.Add(levelFailedUI.ID, levelFailedUI);
+
+            //what menu do i see first?
+            menuManager.SetActiveScene(levelFailedUI.ID);
 
             #endregion
         }
@@ -543,7 +647,7 @@ namespace GD.App
             levelUI = new GameObject("Tutorial 2 UI",
                 ObjectType.Static, RenderType.Opaque);
             levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 10, 75));  //World
+                new Vector3(0, 10, 225));  //World
             texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial2");
             levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -676,8 +780,8 @@ namespace GD.App
             GameObject cameraGameObject = null;
 
             Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
-            curve3D.Add(new Vector3(-12, 1, -125), 0);
-            curve3D.Add(new Vector3(12, 7.5f, -100), 3300);
+            curve3D.Add(new Vector3(-12, 1, -100), 0);
+            curve3D.Add(new Vector3(12, 7.5f, -75), 3300);
             curve3D.Add(new Vector3(-12, 7, -50), 6600);
             curve3D.Add(new Vector3(0, 4.25F, 0), 9900);
 
@@ -795,7 +899,7 @@ namespace GD.App
         {
             InitializeCollidableGround(worldScale);
             InitializeCollidableLevel01();
-            InitializeCollidableObstacles();
+            InitializeLevel01Obstacles();
             InitializeFinishLineTrigger();
         }
 
@@ -836,9 +940,9 @@ namespace GD.App
             var wall = new GameObject("Collidable wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1300),
+                (new Vector3(1, 10f, 1100),
                 new Vector3(0, 0, 30),
-                new Vector3(15f, 5f, 350));
+                new Vector3(15f, 5f, 450));
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridpurple200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
@@ -858,9 +962,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1300),
+                (new Vector3(1, 10f, 1100),
                 null,
-                new Vector3(15f, 5f, 350));
+                new Vector3(15f, 5f, 450));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -883,9 +987,9 @@ namespace GD.App
             wall = new GameObject("Collidable wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1300),
+                (new Vector3(1, 10f, 1100),
                 new Vector3(0, 0, -30),
-                new Vector3(-15f, 5f, 360));
+                new Vector3(-15f, 5f, 460));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -904,9 +1008,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1300),
+                (new Vector3(1, 10f, 1100),
                 null,
-                new Vector3(-15f, 5f, 360));
+                new Vector3(-15f, 5f, 460));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -929,9 +1033,9 @@ namespace GD.App
             var ceiling = new GameObject("Collidable ceiling", ObjectType.Static, RenderType.Opaque);
             ceiling.GameObjectType = GameObjectType.Architecture;
             ceiling.Transform = new Transform
-                (new Vector3(1, 30f, 1300),
+                (new Vector3(1, 30f, 1100),
                 new Vector3(0, 0, 90),
-                new Vector3(0, 9.5f, 350));
+                new Vector3(0, 9.5f, 450));
 
             ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -954,9 +1058,9 @@ namespace GD.App
             var floor = new GameObject("Collidable floor", ObjectType.Static, RenderType.Opaque);
             floor.GameObjectType = GameObjectType.Architecture;
             floor.Transform = new Transform
-                (new Vector3(1, 40f, 1300),
+                (new Vector3(1, 40f, 1100),
                 new Vector3(0, 0, 90),
-                new Vector3(0, -.45f, 360));
+                new Vector3(0, -.45f, 460));
 
             floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -973,11 +1077,299 @@ namespace GD.App
             sceneManager.ActiveScene.Add(floor);
 
             #endregion floor
+
+            InitializeCollidableLevel02();
         }
 
-        
+        private void InitializeCollidableLevel02()
+        {
+            #region wallR
+            var wall = new GameObject("Collidable wall right", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                new Vector3(0, 0, 30),
+                new Vector3(15f, 5f, 1550));
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
 
-        private void InitializeCollidableObstacles()
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            var wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            wall = new GameObject("Collidable small wall right", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                null,
+                new Vector3(15f, 5f, 1550));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            #endregion wallR
+
+            #region wallL
+
+            wall = new GameObject("Collidable wall left", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                new Vector3(0, 0, -30),
+                new Vector3(-15f, 5f, 1560));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            wall = new GameObject("Collidable small wall left", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                null,
+                new Vector3(-15f, 5f, 1560));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            #endregion wallL
+
+            #region ceiling
+
+            var ceiling = new GameObject("Collidable ceiling", ObjectType.Static, RenderType.Opaque);
+            ceiling.GameObjectType = GameObjectType.Architecture;
+            ceiling.Transform = new Transform
+                (new Vector3(1, 30f, 1100),
+                new Vector3(0, 0, 90),
+                new Vector3(0, 9.5f, 1550));
+
+            ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            var ceilingCollider = new Collider(ceiling, true);
+            ceilingCollider.AddPrimitive(new Box(
+                ceiling.Transform.Translation,
+                ceiling.Transform.Rotation,
+                ceiling.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            ceilingCollider.Enable(ceiling, true, 10);
+            ceiling.AddComponent(ceilingCollider);
+
+            sceneManager.ActiveScene.Add(ceiling);
+
+            #endregion ceiling
+
+            #region floor
+
+            var floor = new GameObject("Collidable floor", ObjectType.Static, RenderType.Opaque);
+            floor.GameObjectType = GameObjectType.Architecture;
+            floor.Transform = new Transform
+                (new Vector3(1, 40f, 1100),
+                new Vector3(0, 0, 90),
+                new Vector3(0, -.45f, 1560));
+
+            floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            var floorCollider = new Collider(floor, true);
+            floorCollider.AddPrimitive(new Box(
+                floor.Transform.Translation,
+                floor.Transform.Rotation,
+                floor.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            floorCollider.Enable(floor, true, 10);
+            ceiling.AddComponent(floorCollider);
+
+            sceneManager.ActiveScene.Add(floor);
+
+            #endregion floor
+
+            #region wallR
+            wall = new GameObject("Collidable wall right", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                new Vector3(0, 0, 30),
+                new Vector3(15f, 5f, 2650));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            wall = new GameObject("Collidable small wall right", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                null,
+                new Vector3(15f, 5f, 2650));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            #endregion wallR
+
+            #region wallL
+
+            wall = new GameObject("Collidable wall left", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                new Vector3(0, 0, -30),
+                new Vector3(-15f, 5f, 2660));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            wall = new GameObject("Collidable small wall left", ObjectType.Static, RenderType.Opaque);
+            wall.GameObjectType = GameObjectType.Architecture;
+            wall.Transform = new Transform
+                (new Vector3(1, 10f, 1100),
+                null,
+                new Vector3(-15f, 5f, 2660));
+
+            wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            wallCollider = new Collider(wall, true);
+            wallCollider.AddPrimitive(new Box(
+                wall.Transform.Translation,
+                wall.Transform.Rotation,
+                wall.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            wallCollider.Enable(wall, true, 10);
+            wall.AddComponent(wallCollider);
+
+            sceneManager.ActiveScene.Add(wall);
+
+            #endregion wallL
+
+            #region ceiling
+
+            ceiling = new GameObject("Collidable ceiling", ObjectType.Static, RenderType.Opaque);
+            ceiling.GameObjectType = GameObjectType.Architecture;
+            ceiling.Transform = new Transform
+                (new Vector3(1, 30f, 1100),
+                new Vector3(0, 0, 90),
+                new Vector3(0, 9.5f, 2650));
+
+            ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            ceilingCollider = new Collider(ceiling, true);
+            ceilingCollider.AddPrimitive(new Box(
+                ceiling.Transform.Translation,
+                ceiling.Transform.Rotation,
+                ceiling.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            ceilingCollider.Enable(ceiling, true, 10);
+            ceiling.AddComponent(ceilingCollider);
+
+            sceneManager.ActiveScene.Add(ceiling);
+
+            #endregion ceiling
+
+            #region floor
+
+            floor = new GameObject("Collidable floor", ObjectType.Static, RenderType.Opaque);
+            floor.GameObjectType = GameObjectType.Architecture;
+            floor.Transform = new Transform
+                (new Vector3(1, 40f, 1100),
+                new Vector3(0, 0, 90),
+                new Vector3(0, -.45f, 2660));
+
+            floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            floorCollider = new Collider(floor, true);
+            floorCollider.AddPrimitive(new Box(
+                floor.Transform.Translation,
+                floor.Transform.Rotation,
+                floor.Transform.Scale), //make the colliders a fraction larger so that transparent boxes dont sit exactly on the ground and we end up with flicker or z-fighting
+                new MaterialProperties(0.8f, 0.8f, 0.7f));
+            floorCollider.Enable(floor, true, 10);
+            ceiling.AddComponent(floorCollider);
+
+            sceneManager.ActiveScene.Add(floor);
+
+            #endregion floor
+
+        }
+
+
+        private void InitializeLevel01Obstacles()
         {
             #region obstacle1
 
@@ -1012,7 +1404,7 @@ namespace GD.App
             #endregion obstacle1
 
             #region obstacle2
-            int num2X = rnd.Next(-7, 7);
+            int num2X = rnd.Next(-7, 0);
             int num2Z = rnd.Next(500, 750);
             obstacleSmall = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
@@ -1051,7 +1443,7 @@ namespace GD.App
             #endregion obstacle2
 
             #region obstacle3
-            int num3X = rnd.Next(-7, 7);
+            int num3X = rnd.Next(0, 7);
             int num3Z = rnd.Next(755, 950);
             obstacleSmall = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
@@ -1089,6 +1481,222 @@ namespace GD.App
 
             #endregion obstacle3
 
+            InitializeLevel02Obstacles();
+
+        }
+
+        private void InitializeLevel02Obstacles()
+        {
+            #region jump obstacle1
+
+            var obstacleJump = new GameObject("obstacle jump 1",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleJump.Transform = new Transform(new Vector3(29, 2, 1), null,
+                new Vector3(0, 1, 1050));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            Collider obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleJump.Transform.Translation,
+                obstacleJump.Transform.Rotation,
+                obstacleJump.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleJump, false, 10);
+            obstacleJump.AddComponent(obstacleCollider);
+
+            obstacleJump.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleJump);
+
+            #endregion jump obstacle1
+
+            #region jump obstacle2
+
+            obstacleJump = new GameObject("obstacle jump 2",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleJump.Transform = new Transform(new Vector3(29, 2, 1), null,
+                new Vector3(0, 1, 1550));  //World
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleJump.Transform.Translation,
+                obstacleJump.Transform.Rotation,
+                obstacleJump.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleJump, false, 10);
+            obstacleJump.AddComponent(obstacleCollider);
+
+            obstacleJump.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleJump);
+
+            #endregion jump obstacle2
+
+            #region jump obstacle3
+
+            obstacleJump = new GameObject("obstacle jump 3",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleJump.Transform = new Transform(new Vector3(29, 2, 1), null,
+                new Vector3(0, 1, 1950));  //World
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleJump.Transform.Translation,
+                obstacleJump.Transform.Rotation,
+                obstacleJump.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleJump, false, 10);
+            obstacleJump.AddComponent(obstacleCollider);
+
+            obstacleJump.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleJump);
+
+            #endregion jump obstacle3
+
+            #region jump obstacle4
+
+            obstacleJump = new GameObject("obstacle jump 4",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleJump.Transform = new Transform(new Vector3(29, 2, 1), null,
+                new Vector3(0, 1, 2450));  //World
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleJump.Transform.Translation,
+                obstacleJump.Transform.Rotation,
+                obstacleJump.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleJump, false, 10);
+            obstacleJump.AddComponent(obstacleCollider);
+
+            obstacleJump.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleJump);
+
+            #endregion jump obstacle4
+
+            #region obstacle5
+
+            Random rnd = new Random();
+            int num1X = rnd.Next(-3, 3);
+            int num1Z = rnd.Next(1200, 1500);
+
+            var obstacleLarge = new GameObject("obstacle large 1",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
+                new Vector3(num1X, 3.5f, num1Z));  //World
+            obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleLarge.Transform.Translation,
+                obstacleLarge.Transform.Rotation,
+                obstacleLarge.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleLarge, false, 10);
+            obstacleLarge.AddComponent(obstacleCollider);
+
+            obstacleLarge.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleLarge);
+
+            #endregion obstacle5
+
+            #region obstacle6
+            int num2X = rnd.Next(-5, 0);
+            int num2Z = rnd.Next(1600, 1900);
+
+            obstacleLarge = new GameObject("obstacle large 2",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
+                new Vector3(num2X, 3.5f, num2Z));  //World
+            obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleLarge.Transform.Translation,
+                obstacleLarge.Transform.Rotation,
+                obstacleLarge.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleLarge, false, 10);
+            obstacleLarge.AddComponent(obstacleCollider);
+
+            obstacleLarge.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleLarge);
+
+            #endregion obstacle5
+
+            #region obstacle7
+            int num3X = rnd.Next(0,5);
+            int num3Z = rnd.Next(2000, 2400);
+
+            obstacleLarge = new GameObject("obstacle large 3",
+                ObjectType.Static, RenderType.Opaque);
+            obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
+                new Vector3(num3X, 3.5f, num3Z));  //World
+            obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
+            obstacleCollider.AddPrimitive(
+                new Box(
+                obstacleLarge.Transform.Translation,
+                obstacleLarge.Transform.Rotation,
+                obstacleLarge.Transform.Scale),
+                new MaterialProperties(0.8f, 0.8f, 0.7f)
+                );
+
+            obstacleCollider.Enable(obstacleLarge, false, 10);
+            obstacleLarge.AddComponent(obstacleCollider);
+
+            obstacleLarge.AddComponent(new AudioEmitterBehaviour());
+
+            sceneManager.ActiveScene.Add(obstacleLarge);
+
+            #endregion obstacle5
+
         }
 
         private void InitializeFinishLineTrigger()
@@ -1098,7 +1706,7 @@ namespace GD.App
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
             finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 2500));  //World
+                new Vector3(0, 5, 2520));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));

@@ -182,7 +182,7 @@
         //add more here...
         OnIntroCamera,
         OnEnterLevelFailedUI,
-        OnExitLevelFailedUI
+        OnEnterLevelCompleteUI
     }
 
     /// <summary>

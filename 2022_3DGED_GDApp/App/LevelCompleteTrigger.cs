@@ -39,7 +39,7 @@ namespace GD.App
                 object[] parameters2 = { "BGMusic" };
                 EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPause, parameters2));
                 EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
-                EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnEnterLevelFailedUI));
+                EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnEnterLevelCompleteUI));
 
                 collided = true;
             }

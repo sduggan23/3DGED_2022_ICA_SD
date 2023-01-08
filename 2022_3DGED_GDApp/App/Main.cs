@@ -558,7 +558,7 @@ namespace GD.App
             levelUI = new GameObject("Tutorial 2 UI",
                 ObjectType.Static, RenderType.Opaque);
             levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 10, 985));  //World
+                new Vector3(0, 10, 1000));  //World
             texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial3");
             levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -794,7 +794,7 @@ namespace GD.App
         private void InitializeCollidableContent(float worldScale)
         {
             InitializeCollidableGround(worldScale);
-            InitializeCollidableLevel();
+            InitializeCollidableLevel01();
             InitializeCollidableObstacles();
             InitializeFinishLineTrigger();
         }
@@ -830,16 +830,16 @@ namespace GD.App
             sceneManager.ActiveScene.Add(ground);
         }
 
-        private void InitializeCollidableLevel()
+        private void InitializeCollidableLevel01()
         {
             #region wallR
             var wall = new GameObject("Collidable wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1250),
+                (new Vector3(1, 10f, 1300),
                 new Vector3(0, 0, 30),
-                new Vector3(15f, 5f, 500));
-            var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
+                new Vector3(15f, 5f, 350));
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridpurple200%");
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -858,9 +858,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall right", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1250),
+                (new Vector3(1, 10f, 1300),
                 null,
-                new Vector3(15f, 5f, 500));
+                new Vector3(15f, 5f, 350));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -883,9 +883,9 @@ namespace GD.App
             wall = new GameObject("Collidable wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1250),
+                (new Vector3(1, 10f, 1300),
                 new Vector3(0, 0, -30),
-                new Vector3(-15f, 5f, 510));
+                new Vector3(-15f, 5f, 360));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -904,10 +904,9 @@ namespace GD.App
             wall = new GameObject("Collidable small wall left", ObjectType.Static, RenderType.Opaque);
             wall.GameObjectType = GameObjectType.Architecture;
             wall.Transform = new Transform
-                (new Vector3(1, 10f, 1250),
+                (new Vector3(1, 10f, 1300),
                 null,
-                new Vector3(-15f, 5f, 510));
-            texture = Content.Load<Texture2D>("Assets/Textures/Level/gridblue200%");
+                new Vector3(-15f, 5f, 360));
 
             wall.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -930,9 +929,9 @@ namespace GD.App
             var ceiling = new GameObject("Collidable ceiling", ObjectType.Static, RenderType.Opaque);
             ceiling.GameObjectType = GameObjectType.Architecture;
             ceiling.Transform = new Transform
-                (new Vector3(1, 30f, 1250),
+                (new Vector3(1, 30f, 1300),
                 new Vector3(0, 0, 90),
-                new Vector3(0, 9.5f, 500));
+                new Vector3(0, 9.5f, 350));
 
             ceiling.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -955,9 +954,9 @@ namespace GD.App
             var floor = new GameObject("Collidable floor", ObjectType.Static, RenderType.Opaque);
             floor.GameObjectType = GameObjectType.Architecture;
             floor.Transform = new Transform
-                (new Vector3(1, 40f, 1250),
+                (new Vector3(1, 40f, 1300),
                 new Vector3(0, 0, 90),
-                new Vector3(0, -.45f, 510));
+                new Vector3(0, -.45f, 360));
 
             floor.AddComponent(new Renderer(new GDBasicEffect(unlitEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -976,24 +975,26 @@ namespace GD.App
             #endregion floor
         }
 
+        
+
         private void InitializeCollidableObstacles()
         {
             #region obstacle1
 
             Random rnd = new Random();
             int num1X = rnd.Next(-5, 5);
-            int num1Z = rnd.Next(100, 250);
+            int num1Z = rnd.Next(250, 500);
 
             var obstacleSmall = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
                 new Vector3(num1X, 1.5f, num1Z));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Level/gridred");
+            var texture = Content.Load<Texture2D>("Assets/Textures/Level/texture3");
             obstacleSmall.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            Collider obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
-            obstacleSmallCollider.AddPrimitive(
+            Collider obstacleCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleCollider.AddPrimitive(
                 new Box(
                 obstacleSmall.Transform.Translation,
                 obstacleSmall.Transform.Rotation,
@@ -1001,8 +1002,8 @@ namespace GD.App
                 new MaterialProperties(0.8f, 0.8f, 0.7f)
                 );
 
-            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
-            obstacleSmall.AddComponent(obstacleSmallCollider);
+            obstacleCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleCollider);
 
             obstacleSmall.AddComponent(new AudioEmitterBehaviour());
 
@@ -1012,7 +1013,7 @@ namespace GD.App
 
             #region obstacle2
             int num2X = rnd.Next(-7, 7);
-            int num2Z = rnd.Next(500, 700);
+            int num2Z = rnd.Next(500, 750);
             obstacleSmall = new GameObject("obstacle small 2",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -1031,8 +1032,8 @@ namespace GD.App
 
             //sceneManager.ActiveScene.Add(obstacleSmall2);
 
-            obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
-            obstacleSmallCollider.AddPrimitive(
+            obstacleCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleCollider.AddPrimitive(
                 new Box(
                 obstacleSmall.Transform.Translation,
                 obstacleSmall.Transform.Rotation,
@@ -1040,8 +1041,8 @@ namespace GD.App
                 new MaterialProperties(0.8f, 0.8f, 0.7f)
                 );
 
-            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
-            obstacleSmall.AddComponent(obstacleSmallCollider);
+            obstacleCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleCollider);
 
             obstacleSmall.AddComponent(new AudioEmitterBehaviour());
 
@@ -1051,7 +1052,7 @@ namespace GD.App
 
             #region obstacle3
             int num3X = rnd.Next(-7, 7);
-            int num3Z = rnd.Next(750, 950);
+            int num3Z = rnd.Next(755, 950);
             obstacleSmall = new GameObject("obstacle small 3",
                 ObjectType.Static, RenderType.Opaque);
             obstacleSmall.Transform = new Transform(new Vector3(3, 3, 3), null,
@@ -1070,8 +1071,8 @@ namespace GD.App
 
             //sceneManager.ActiveScene.Add(obstacleSmall3);
 
-            obstacleSmallCollider = new ObstacleCollider(obstacleSmall, true, false);
-            obstacleSmallCollider.AddPrimitive(
+            obstacleCollider = new ObstacleCollider(obstacleSmall, true, false);
+            obstacleCollider.AddPrimitive(
                 new Box(
                 obstacleSmall.Transform.Translation,
                 obstacleSmall.Transform.Rotation,
@@ -1079,14 +1080,15 @@ namespace GD.App
                 new MaterialProperties(0.8f, 0.8f, 0.7f)
                 );
 
-            obstacleSmallCollider.Enable(obstacleSmall, false, 10);
-            obstacleSmall.AddComponent(obstacleSmallCollider);
+            obstacleCollider.Enable(obstacleSmall, false, 10);
+            obstacleSmall.AddComponent(obstacleCollider);
 
             obstacleSmall.AddComponent(new AudioEmitterBehaviour());
 
             sceneManager.ActiveScene.Add(obstacleSmall);
 
             #endregion obstacle3
+
         }
 
         private void InitializeFinishLineTrigger()
@@ -1096,7 +1098,7 @@ namespace GD.App
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
             finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 2000));  //World
+                new Vector3(0, 5, 2500));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -1166,7 +1168,7 @@ namespace GD.App
 
         private void InitializeSkyBox(float worldScale)
         {
-            float halfWorldScale = worldScale / 1.5f;
+            float halfWorldScale = worldScale / 2;
 
             GameObject quad = null;
             var gdBasicEffect = new GDBasicEffect(unlitEffect);

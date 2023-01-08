@@ -257,30 +257,6 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Menu/Backgrounds/exitmenuwithtrans.png
 
-#begin Assets/Textures/Menu/Backgrounds/level01.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/level01.png
-
-#begin Assets/Textures/Menu/Backgrounds/level02.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/level02.png
-
 #begin Assets/Textures/Menu/Backgrounds/levelcomplete.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -329,7 +305,7 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Menu/Backgrounds/mainmenu.PNG
 
-#begin Assets/Textures/Menu/Backgrounds/tutorial.png
+#begin Assets/Textures/Menu/Backgrounds/tutorial0.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -339,7 +315,79 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/tutorial.png
+/build:Assets/Textures/Menu/Backgrounds/tutorial0.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial0.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial1.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial1.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial2.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial2.png
+
+#begin Assets/Textures/Menu/Backgrounds/tutorial3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Menu/Backgrounds/tutorial3.png
 
 #begin Assets/Textures/Menu/Controls/genericbtn.png
 /importer:TextureImporter

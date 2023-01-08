@@ -180,8 +180,9 @@
         OnMouseClick,
 
         //add more here...
-        OnEnterControlsMenu,
-        OnLevelFailedUI
+        OnIntroCamera,
+        OnEnterLevelFailedUI,
+        OnExitLevelFailedUI
     }
 
     /// <summary>

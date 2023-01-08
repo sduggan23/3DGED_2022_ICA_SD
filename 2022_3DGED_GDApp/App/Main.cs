@@ -171,6 +171,7 @@ namespace GD.App
             //set game title
             SetTitle(title);
             InitializeEvents();
+            InitializeCurves();
 
             //load sounds, textures, models etc
             LoadMediaAssets();
@@ -181,9 +182,6 @@ namespace GD.App
 
             //add scene manager and starting scenes
             InitializeScenes();
-
-            //initialize curves used by cameras
-            InitializeCurves();
 
             //add collidable drawn stuff
             InitializeCollidableContent(worldScale);
@@ -215,7 +213,7 @@ namespace GD.App
 
         private void HandleEnterLevelFailedUI(EventData eventData)
         {
-            if (eventData.EventActionType == EventActionType.OnEnterControlsMenu)
+            if (eventData.EventActionType == EventActionType.OnEnterLevelFailedUI)
             {
                 InitializeLevelFailedUI();
             }
@@ -223,7 +221,7 @@ namespace GD.App
 
         private void HandleExitLevelFailedUI(EventData eventData)
         {
-            if (eventData.EventActionType == EventActionType.OnLevelFailedUI)
+            if (eventData.EventActionType == EventActionType.OnExit)
             {
                 Exit();
             }
@@ -439,7 +437,7 @@ namespace GD.App
             //add bounding box for mouse collisions using the renderer for the texture (which will automatically correctly size the bounding box for mouse interactions)
             var buttonCollider2D = new ButtonCollider2D(menuGameObject, renderer2D);
             //add any events on MouseButton (e.g. Left, Right, Hover)
-            buttonCollider2D.AddEvent(MouseButton.Left, new EventData(EventCategoryType.Menu, EventActionType.OnLevelFailedUI));
+            buttonCollider2D.AddEvent(MouseButton.Left, new EventData(EventCategoryType.Menu, EventActionType.OnExit));
             menuGameObject.AddComponent(buttonCollider2D);
 
             #endregion
@@ -510,35 +508,65 @@ namespace GD.App
 
         private void InitializeTutorialUI()
         {
-            #region tutorial UI
+            #region Tutorial 0 UI
 
-            var levelUI = new GameObject("Level 01 UI",
+            var levelUI = new GameObject("Tutorial 0 UI",
                 ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 5));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial");
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 5, 0));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial0");
             levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
            
             sceneManager.ActiveScene.Add(levelUI);
 
-            #endregion tutorial UI
+            #endregion Tutorial 0 UI
 
-            #region Level 02 UI
+            #region Tutorial 1 UI
 
-            levelUI = new GameObject("level 02 UI",
+            levelUI = new GameObject("Tutorial 1 UI",
                 ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 510));  //World
-            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/level02");
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 15));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial1");
             levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
 
             sceneManager.ActiveScene.Add(levelUI);
 
-            #endregion tutorial UI
+            #endregion Tutorial 1 UI
+
+            #region Tutorial 2 UI
+
+            levelUI = new GameObject("Tutorial 2 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 75));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial2");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 2 UI
+
+            #region Tutorial 3 UI
+
+            levelUI = new GameObject("Tutorial 2 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 985));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial3");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 3 UI
         }
 
         private void InitializeDistanceMeter()
@@ -552,10 +580,7 @@ namespace GD.App
             var spriteFont = Content.Load<SpriteFont>("Assets/Fonts/Audiowide-Regular");
 
             //add components to the info list to add UI information
-            float headingScale = 1f;
             float contentScale = 2f;
-            perfUtility.infoList.Add(new TextInfo(_spriteBatch, spriteFont, "Reach 1000 To Complete the Level", Color.Yellow, headingScale * Vector2.One));
-
             var infoFunction = (Transform transform) =>
             {
                 return transform.Translation.GetNewRounded(0).Z.ToString();
@@ -652,9 +677,9 @@ namespace GD.App
 
             Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
             curve3D.Add(new Vector3(-12, 1, -125), 0);
-            curve3D.Add(new Vector3(12, 7.5f, -100), 2500);
-            curve3D.Add(new Vector3(-12, 7, -50), 5000);
-            curve3D.Add(new Vector3(0, 4.25F, 0), 7500);
+            curve3D.Add(new Vector3(12, 7.5f, -100), 3300);
+            curve3D.Add(new Vector3(-12, 7, -50), 6600);
+            curve3D.Add(new Vector3(0, 4.25F, 0), 9900);
 
 
             cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
@@ -957,7 +982,7 @@ namespace GD.App
 
             Random rnd = new Random();
             int num1X = rnd.Next(-5, 5);
-            int num1Z = rnd.Next(50, 250);
+            int num1Z = rnd.Next(100, 250);
 
             var obstacleSmall = new GameObject("obstacle small 1",
                 ObjectType.Static, RenderType.Opaque);
@@ -1071,7 +1096,7 @@ namespace GD.App
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
             finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 1000));  //World
+                new Vector3(0, 5, 2000));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -1443,36 +1468,25 @@ namespace GD.App
 
             #endregion
 
-#if DEMO
-
-            #region Demo - UI - progress bar
-
-            if (Input.Keys.WasJustPressed(Keys.Up))
-            {
-                object[] parameters = { "progress bar - health - 1", 1 };
-                EventDispatcher.Raise(new EventData(EventCategoryType.UI, EventActionType.OnHealthDelta, parameters));
-            }
-            else if (Input.Keys.WasJustPressed(Keys.Down))
-            {
-                object[] parameters = { "progress bar - health - 1", -1 };
-                EventDispatcher.Raise(new EventData(EventCategoryType.UI, EventActionType.OnHealthDelta, parameters));
-            }
-
-            #endregion
-
-            #region Demo - sound
-
-            #endregion
-
             #region Demo - Camera switching
             bool hasbeenPressed = false;
 
-            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false && Application.CameraManager.ActiveCamera.transform.Translation.Z >= -1)
+
+            if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false)
             {
                 InitializeDistanceMeter();
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
                 hasbeenPressed = true;
             }
+
+            if (Input.Keys.IsPressed(Keys.Up) && hasbeenPressed == false && Application.CameraManager.ActiveCamera.transform.Translation.Z >= -1)
+            {
+                InitializeDistanceMeter();
+                cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
+                hasbeenPressed = true;
+            }
+
+
 
             else if (Input.Keys.IsPressed(Keys.F1))
                 cameraManager.SetActiveCamera(AppData.FIRST_PERSON_CAMERA_NAME);
@@ -1500,7 +1514,7 @@ namespace GD.App
 
             #region Demo - Raising events using GDEvent
 
-            if (Input.Keys.IsPressed(Keys.W))
+            if (Input.Keys.IsPressed(Keys.Up))
             {
                 object[] parameters = { "Engine" };
                 EventDispatcher.Raise(
@@ -1510,7 +1524,7 @@ namespace GD.App
 
             }
 
-            if (Input.Keys.IsReleased(Keys.W))
+            if (Input.Keys.IsReleased(Keys.Down))
             {
                 object[] parameters = { "Engine" };
                 EventDispatcher.Raise(
@@ -1520,12 +1534,13 @@ namespace GD.App
 
             }
 
+
             if (Input.Keys.WasJustPressed(Keys.E))
                 OnChanged.Invoke(this, null); //passing null for EventArgs but we'll make our own class MyEventArgs::EventArgs later
 
             #endregion
 
-#endif
+
             if (Input.Keys.IsPressed(Keys.Escape))
                 Exit();
 

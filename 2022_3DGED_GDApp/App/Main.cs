@@ -136,6 +136,8 @@ namespace GD.App
         private void InitializeEvents()
         {
             EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
+            EventDispatcher.Subscribe(EventCategoryType.Menu, HandleEnterLevelFailedUI);
+            EventDispatcher.Subscribe(EventCategoryType.Menu, HandleExitLevelFailedUI);
         }
 
 #endif
@@ -209,6 +211,22 @@ namespace GD.App
             litEffect.TextureEnabled = true;
             litEffect.LightingEnabled = true;
             litEffect.EnableDefaultLighting();
+        }
+
+        private void HandleEnterLevelFailedUI(EventData eventData)
+        {
+            if (eventData.EventActionType == EventActionType.OnEnterControlsMenu)
+            {
+                InitializeLevelFailedUI();
+            }
+        }
+
+        private void HandleExitLevelFailedUI(EventData eventData)
+        {
+            if (eventData.EventActionType == EventActionType.OnLevelFailedUI)
+            {
+                Exit();
+            }
         }
 
         private void InitializeMainMenu()
@@ -357,6 +375,101 @@ namespace GD.App
             #endregion
         }
 
+        private void InitializeLevelFailedUI()
+        {
+            GameObject menuGameObject = null;
+            Material2D material = null;
+            Renderer2D renderer2D = null;
+            Texture2D btnTexture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/genericbtn");
+            Texture2D backGroundtexture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/levelfailed");
+            SpriteFont spriteFont = Content.Load<SpriteFont>("Assets/Fonts/Audiowide-Regular");
+            Vector2 btnScale = Vector2.One;
+
+            #region Create new menu scene
+
+            //add new main menu scene
+            var levelFailedUI = new Scene2D("level failed UI");
+
+            #endregion
+
+            #region Add Background Texture
+
+            menuGameObject = new GameObject("background");
+            var scaleToWindow = _graphics.GetScaleFactorForResolution(backGroundtexture, Vector2.Zero);
+            //set transform
+            menuGameObject.Transform = new Transform(
+                new Vector3(scaleToWindow, 1), //s
+                new Vector3(0, 0, 0), //r
+                new Vector3(0, 0, 0)); //t
+
+            #region texture
+
+            //material and renderer
+            material = new TextureMaterial2D(backGroundtexture, Color.White, 1);
+            menuGameObject.AddComponent(new Renderer2D(material));
+
+            #endregion
+
+            //add to scene2D
+            levelFailedUI.Add(menuGameObject);
+
+            #endregion
+
+            #region Add Play button and text
+
+            menuGameObject = new GameObject("exit");
+            menuGameObject.Transform = new Transform(
+            new Vector3(btnScale, 1), //s
+            new Vector3(0, 0, 0), //r
+            new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() + new Vector2(-0, 250), 0)); //t
+
+            #region texture
+
+            //material and renderer
+            material = new TextureMaterial2D(btnTexture, Color.White, 0.9f);
+            //add renderer to draw the texture
+            renderer2D = new Renderer2D(material);
+            //add renderer as a component
+            menuGameObject.AddComponent(renderer2D);
+
+            #endregion
+
+            #region collider
+
+            //add bounding box for mouse collisions using the renderer for the texture (which will automatically correctly size the bounding box for mouse interactions)
+            var buttonCollider2D = new ButtonCollider2D(menuGameObject, renderer2D);
+            //add any events on MouseButton (e.g. Left, Right, Hover)
+            buttonCollider2D.AddEvent(MouseButton.Left, new EventData(EventCategoryType.Menu, EventActionType.OnLevelFailedUI));
+            menuGameObject.AddComponent(buttonCollider2D);
+
+            #endregion
+
+            #region text
+
+            //material and renderer
+            material = new TextMaterial2D(spriteFont, "Quit", new Vector2(100, 25), Color.White, 0.8f);
+            //add renderer to draw the text
+            renderer2D = new Renderer2D(material);
+            menuGameObject.AddComponent(renderer2D);
+
+            #endregion
+
+            //add to scene2D
+            levelFailedUI.Add(menuGameObject);
+
+            #endregion
+
+            #region Add Scene to Manager and Set Active
+
+            //add scene2D to menu manager
+            menuManager.Add(levelFailedUI.ID, levelFailedUI);
+
+            //what menu do i see first?
+            menuManager.SetActiveScene(levelFailedUI.ID);
+
+            #endregion
+        }
+
         private void InitializeUI()
         {
             #region UI Variables
@@ -393,6 +506,39 @@ namespace GD.App
             uiManager.SetActiveScene(mainHUD.ID);
 
             #endregion
+        }
+
+        private void InitializeTutorialUI()
+        {
+            #region tutorial UI
+
+            var levelUI = new GameObject("Level 01 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 10), null,
+                new Vector3(0, 5, 5));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+           
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion tutorial UI
+
+            #region Level 02 UI
+
+            levelUI = new GameObject("level 02 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 10), null,
+                new Vector3(0, 5, 510));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/level02");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion tutorial UI
         }
 
         private void InitializeDistanceMeter()
@@ -631,6 +777,7 @@ namespace GD.App
         private void InitializeNonCollidableContent(float worldScale)
         {
             InitializeSkyBox(worldScale);
+            InitializeTutorialUI();
         }
 
         private void InitializeCollidableGround(float worldScale)
@@ -924,9 +1071,8 @@ namespace GD.App
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
             finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 100));  //World
+                new Vector3(0, 5, 1000));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
-            //var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/level02");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 

@@ -133,6 +133,11 @@ namespace GD.App
             System.Diagnostics.Debug.WriteLine($"{e} was sent by {sender}");
         }
 
+        private void InitializeEvents()
+        {
+            EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
+        }
+
 #endif
 
         protected override void Initialize()
@@ -163,14 +168,14 @@ namespace GD.App
         {
             //set game title
             SetTitle(title);
-            EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
+            InitializeEvents();
 
             //load sounds, textures, models etc
             LoadMediaAssets();
 
             //add UI and menu
             InitializeUI();
-            InitializeMenu();
+            InitializeMainMenu();
 
             //add scene manager and starting scenes
             InitializeScenes();
@@ -206,18 +211,15 @@ namespace GD.App
             litEffect.EnableDefaultLighting();
         }
 
-        private void InitializeMenu()
+        private void InitializeMainMenu()
         {
-            #region Menu Variables
             GameObject menuGameObject = null;
             Material2D material = null;
             Renderer2D renderer2D = null;
             Texture2D btnTexture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/genericbtn");
-            Texture2D backGroundtexture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/exitmenuwithtrans");
-            SpriteFont spriteFont = Content.Load<SpriteFont>("Assets/Fonts/menu");
-            Vector2 btnScale = new Vector2(0.8f, 0.8f);
-
-            #endregion Menu Variables
+            Texture2D backGroundtexture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/main_menu_bg_1280x720");
+            SpriteFont spriteFont = Content.Load<SpriteFont>("Assets/Fonts/Audiowide-Regular");
+            Vector2 btnScale = Vector2.One;
 
             #region Create new menu scene
 
@@ -255,12 +257,12 @@ namespace GD.App
             menuGameObject.Transform = new Transform(
             new Vector3(btnScale, 1), //s
             new Vector3(0, 0, 0), //r
-            new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() - new Vector2(0, 30), 0)); //t
+            new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() + new Vector2(0, -45), 0)); //t
 
             #region texture
 
             //material and renderer
-            material = new TextureMaterial2D(btnTexture, Color.Green, 0.9f);
+            material = new TextureMaterial2D(btnTexture, Color.Orange, 0.9f);
             //add renderer to draw the texture
             renderer2D = new Renderer2D(material);
             //add renderer as a component
@@ -281,7 +283,7 @@ namespace GD.App
             #region text
 
             //material and renderer
-            material = new TextMaterial2D(spriteFont, "Play", new Vector2(70, 5), Color.White, 0.8f);
+            material = new TextMaterial2D(spriteFont, "Start", new Vector2(100, 25), Color.White, 0.8f);
             //add renderer to draw the text
             renderer2D = new Renderer2D(material);
             menuGameObject.AddComponent(renderer2D);
@@ -300,12 +302,12 @@ namespace GD.App
             menuGameObject.Transform = new Transform(
                 new Vector3(btnScale, 1), //s
                 new Vector3(0, 0, 0), //r
-                new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() + new Vector2(0, 30), 0)); //t
+                new Vector3(Application.Screen.ScreenCentre - btnScale * btnTexture.GetCenter() + new Vector2(0, 90), 0)); //t
 
             #region texture
 
             //material and renderer
-            material = new TextureMaterial2D(btnTexture, Color.Red, 0.9f);
+            material = new TextureMaterial2D(btnTexture, Color.Orange, 0.9f);
             //add renderer to draw the texture
             renderer2D = new Renderer2D(material);
             //add renderer as a component
@@ -326,7 +328,7 @@ namespace GD.App
             #region text
 
             //button material and renderer
-            material = new TextMaterial2D(spriteFont, "Exit", new Vector2(70, 5), Color.White, 0.8f);
+            material = new TextMaterial2D(spriteFont, "Exit", new Vector2(100, 25), Color.White, 0.8f);
             //add renderer to draw the text
             renderer2D = new Renderer2D(material);
             menuGameObject.AddComponent(renderer2D);
@@ -489,12 +491,6 @@ namespace GD.App
         {
             //initialize a scene
             var scene = new Scene("level01");
-
-            //add scene to the scene manager
-            sceneManager.Add(scene.ID, scene);
-
-            //initialize a scene
-            scene = new Scene("level02");
 
             //add scene to the scene manager
             sceneManager.Add(scene.ID, scene);
@@ -927,13 +923,14 @@ namespace GD.App
 
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
-            finishLine.Transform = new Transform(new Vector3(29, 10, 1), null,
+            finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
                 new Vector3(0, 5, 100));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
+            //var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/level02");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            Collider levelCompleteTrigger = new LevelCompleteTrigger(finishLine, true, false);
+            Collider levelCompleteTrigger = new LevelCompleteTrigger(finishLine, true, true);
             levelCompleteTrigger.AddPrimitive(
                 new Box(
                 finishLine.Transform.Translation,
@@ -954,7 +951,7 @@ namespace GD.App
 
         private void InitializePlayer()
         {
-            playerGameObject = new GameObject("player 1", ObjectType.Dynamic, RenderType.Opaque);
+            playerGameObject = new GameObject("Player 1", ObjectType.Dynamic, RenderType.Opaque);
 
             playerGameObject.Transform = new Transform(null,
                 null, new Vector3(0, 5, 15));

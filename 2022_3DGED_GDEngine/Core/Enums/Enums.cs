@@ -132,7 +132,6 @@
         Video,
 
         //add more here...
-        GameState
     }
 
     /// <summary>
@@ -179,10 +178,10 @@
         OnRemoveInventory,
         OnAddInventory,
         OnMouseClick,
-        OnShow,
-        OnHide
 
         //add more here...
+        OnEnterControlsMenu,
+        OnLevelFailedUI
     }
 
     /// <summary>

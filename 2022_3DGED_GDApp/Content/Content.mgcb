@@ -13,12 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Assets/Audio/Diegetic/AbstractSpaceshipA01_Flat.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Assets/Audio/Diegetic/AbstractSpaceshipA01_Flat.wav
-
 #begin Assets/Audio/Diegetic/copyc4t__levelup.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -30,12 +24,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Assets/Audio/Diegetic/Engine Hum.wav
-
-#begin Assets/Audio/Diegetic/Spaceship Engine 2.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Assets/Audio/Diegetic/Spaceship Engine 2.wav
 
 #begin Assets/Audio/Diegetic/superphat__scifiheavyblastershot.wav
 /importer:WavImporter
@@ -329,18 +317,6 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Menu/Backgrounds/tutorial0.png
 
-#begin Assets/Textures/Menu/Backgrounds/tutorial0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/tutorial0.png
-
 #begin Assets/Textures/Menu/Backgrounds/tutorial1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -352,30 +328,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Menu/Backgrounds/tutorial1.png
-
-#begin Assets/Textures/Menu/Backgrounds/tutorial1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/tutorial1.png
-
-#begin Assets/Textures/Menu/Backgrounds/tutorial2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/Menu/Backgrounds/tutorial2.png
 
 #begin Assets/Textures/Menu/Backgrounds/tutorial2.png
 /importer:TextureImporter

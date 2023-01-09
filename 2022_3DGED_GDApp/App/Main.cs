@@ -77,28 +77,9 @@ namespace GD.App
             //shows how we can create an event, register for it, and raise it in Main::Update() on Keys.E press
             DemoEvent();
 
-            //shows us how to listen to a specific event
-            DemoStateManagerEvent();
+            ////shows us how to listen to a specific event
+            //DemoStateManagerEvent();
 
-            Demo3DSoundTree();
-        }
-
-        private void Demo3DSoundTree()
-        {
-            //var camera = Application.CameraManager.ActiveCamera.AudioListener;
-            //var audioEmitter = //get tree, get emitterbehaviour, get audio emitter
-
-            //object[] parameters = {"sound name", audioListener, audioEmitter};
-
-            //EventDispatcher.Raise(new EventData(EventCategoryType.Sound,
-            //    EventActionType.OnPlay3D, parameters));
-
-            //throw new NotImplementedException();
-        }
-
-        private void DemoStateManagerEvent()
-        {
-            EventDispatcher.Subscribe(EventCategoryType.Player, HandleEvent);
         }
 
         private void HandleEvent(EventData eventData)
@@ -172,23 +153,20 @@ namespace GD.App
             //set game title
             SetTitle(title);
             InitializeEvents();
-            InitializeCurves();
-
-            //load sounds, textures, models etc
-            LoadMediaAssets();
-
-            //add UI and menu
-            InitializeUI();
-            InitializeMainMenu();
 
             //add scene manager and starting scenes
             InitializeScenes();
+
+            InitializeMainMenu();
 
             //add collidable drawn stuff
             InitializeCollidableContent(worldScale);
 
             //add non-collidable drawn stuff
             InitializeNonCollidableContent(worldScale);
+
+            InitializeUI();
+            LoadSounds();
 
             //add the player
             InitializePlayer();
@@ -197,19 +175,6 @@ namespace GD.App
         private void SetTitle(string title)
         {
             Window.Title = title.Trim();
-        }
-
-        private void InitializeEffects()
-        {
-            //only for skybox with lighting disabled
-            unlitEffect = new BasicEffect(_graphics.GraphicsDevice);
-            unlitEffect.TextureEnabled = true;
-
-            //all other drawn objects
-            litEffect = new BasicEffect(_graphics.GraphicsDevice);
-            litEffect.TextureEnabled = true;
-            litEffect.LightingEnabled = true;
-            litEffect.EnableDefaultLighting();
         }
 
         private void HandleEnterLevelFailedUI(EventData eventData)
@@ -234,6 +199,18 @@ namespace GD.App
             {
                 Exit();
             }
+        }
+
+        private void InitializeScenes()
+        {
+            //initialize a scene
+            var scene = new Scene("level01");
+
+            //add scene to the scene manager
+            sceneManager.Add(scene.ID, scene);
+
+            //don't forget to set active scene
+            sceneManager.SetActiveScene("level01");
         }
 
         private void InitializeMainMenu()
@@ -315,6 +292,12 @@ namespace GD.App
 
             #endregion
 
+            #region color change button
+
+            //menuGameObject.AddComponent(new UIColorFlipOnTimeBehaviour(Color.Green, Color.White, 500));
+
+            #endregion
+
             //add to scene2D
             mainMenuScene.Add(menuGameObject);
 
@@ -360,12 +343,6 @@ namespace GD.App
 
             #endregion
 
-            #region demo - color change button
-
-            // menuGameObject.AddComponent(new UIColorFlipOnTimeBehaviour(Color.Red, Color.Orange, 500));
-
-            #endregion
-
             //add to scene2D
             mainMenuScene.Add(menuGameObject);
 
@@ -380,6 +357,232 @@ namespace GD.App
             menuManager.SetActiveScene(mainMenuScene.ID);
 
             #endregion
+        }
+
+        private void InitializeCameras()
+        {
+            //camera
+            GameObject cameraGameObject = null;
+            InitializeCurves();
+
+            #region Third Person
+
+            cameraGameObject = new GameObject(AppData.THIRD_PERSON_CAMERA_NAME);
+            cameraGameObject.Transform = new Transform(null, null, null);
+            cameraGameObject.AddComponent(new Camera(
+                AppData.FIRST_PERSON_HALF_FOV, //MathHelper.PiOver2 / 2,
+                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
+                AppData.FIRST_PERSON_CAMERA_NCP, //0.1f,
+                AppData.FIRST_PERSON_CAMERA_FCP,
+                new Viewport(0, 0, _graphics.PreferredBackBufferWidth,
+                _graphics.PreferredBackBufferHeight))); // 3000
+
+            cameraGameObject.AddComponent(new ThirdPersonController());
+
+            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
+
+            cameraGameObject.AddComponent(new AudioListenerBehaviour());
+
+            //cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
+
+            #endregion
+
+            #region First Person
+
+            //camera 1
+            cameraGameObject = new GameObject(AppData.FIRST_PERSON_CAMERA_NAME);
+            cameraGameObject.Transform = new Transform(null, null,
+                AppData.FIRST_PERSON_DEFAULT_CAMERA_POSITION);
+
+            #region Camera - View & Projection
+
+            cameraGameObject.AddComponent(
+             new Camera(
+             AppData.FIRST_PERSON_HALF_FOV, //MathHelper.PiOver2 / 2,
+             (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
+             AppData.FIRST_PERSON_CAMERA_NCP, //0.1f,
+             AppData.FIRST_PERSON_CAMERA_FCP,
+             new Viewport(0, 0, _graphics.PreferredBackBufferWidth,
+             _graphics.PreferredBackBufferHeight))); // 3000
+
+            #endregion
+
+            #region Collision - Add capsule
+
+            //adding a collidable surface that enables acceleration, jumping
+            var characterCollider = new CharacterCollider(cameraGameObject, true);
+
+            cameraGameObject.AddComponent(characterCollider);
+            characterCollider.AddPrimitive(new Capsule(
+                cameraGameObject.Transform.Translation,
+                Matrix.CreateRotationX(MathHelper.PiOver2),
+                1, 3.6f),
+                new MaterialProperties(0.2f, 0.8f, 0.7f));
+            characterCollider.Enable(cameraGameObject, false, 1);
+
+            #endregion
+
+            #region Collision - Add Controller for movement (now with collision)
+
+            cameraGameObject.AddComponent(new CollidableFirstPersonController(cameraGameObject,
+                characterCollider,
+                AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
+                AppData.PLAYER_ROTATE_SPEED_VECTOR2, AppData.FIRST_PERSON_CAMERA_SMOOTH_FACTOR, true,
+                AppData.PLAYER_COLLIDABLE_JUMP_HEIGHT));
+
+            #endregion
+
+            #region 3D Sound
+
+            //added ability for camera to listen to 3D sounds
+            cameraGameObject.AddComponent(new AudioListenerBehaviour());
+
+            #endregion
+
+            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
+
+            #endregion First Person
+
+        }
+
+        private void InitializeCurves()
+        {
+            //camera
+            GameObject cameraGameObject = null;
+
+            Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
+            curve3D.Add(new Vector3(-12, 1, -100), 0);
+            curve3D.Add(new Vector3(12, 7.5f, -75), 5000);
+            curve3D.Add(new Vector3(-12, 7, -50), 10000);
+            curve3D.Add(new Vector3(0, 4.25F, 0), 15000);
+
+            cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
+            cameraGameObject.Transform =
+                new Transform(null, new Vector3(0, 180, 0), null);
+            cameraGameObject.AddComponent(new Camera(
+                MathHelper.PiOver2 / 2,
+                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
+                0.1f, 3500,
+                  new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
+
+            //define what action the curve will apply to the target game object
+            var curveAction = (Curve3D curve, GameObject target, GameTime gameTime) =>
+            {
+                target.Transform.SetTranslation(curve.Evaluate(gameTime.TotalGameTime.TotalMilliseconds, 4));
+            };
+
+            cameraGameObject.AddComponent(new CurveBehaviour(curve3D, curveAction));
+            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
+            cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
+        }
+
+        private void InitializeCollidableContent(float worldScale)
+        {
+            InitializeCollidableGround(worldScale);
+            InitializeCollidableLevel01();
+            InitializeLevel01Obstacles();
+            InitializeFinishLineTrigger();
+        }
+
+        private void InitializeNonCollidableContent(float worldScale)
+        {
+            InitializeSkyBox(worldScale);
+            InitializeTutorialUI();
+        }
+
+        private void InitializeUI()
+        {
+            #region UI Variables
+            GameObject uiGameObject = null;
+            Material2D material = null;
+            Texture2D texture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/progress_white");
+
+            var mainHUD = new Scene2D("game HUD");
+
+            #endregion UI Variables
+
+            #region Add UI Element
+
+            uiGameObject = new GameObject("progress bar - health - 1");
+            uiGameObject.Transform = new Transform(
+                new Vector3(1, 1, 0), //s
+                new Vector3(0, 0, 0), //r
+                new Vector3(_graphics.PreferredBackBufferWidth - texture.Width - 20,
+                20, 0)); //t
+
+            //add to scene2D
+            mainHUD.Add(uiGameObject);
+
+            #endregion
+
+            #region Add Scene to Manager and Set Active
+
+            //add scene2D to manager
+            uiManager.Add(mainHUD.ID, mainHUD);
+
+            //what ui do i see first?
+            uiManager.SetActiveScene(mainHUD.ID);
+
+            #endregion
+        }
+
+        private void InitializeTutorialUI()
+        {
+            #region Tutorial 0 UI
+
+            var levelUI = new GameObject("Tutorial 0 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 5, 0));  //World
+            var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial0");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 0 UI
+
+            #region Tutorial 1 UI
+
+            levelUI = new GameObject("Tutorial 1 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 15));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial1");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 1 UI
+
+            #region Tutorial 2 UI
+
+            levelUI = new GameObject("Tutorial 2 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 225));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial2");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 2 UI
+
+            #region Tutorial 3 UI
+
+            levelUI = new GameObject("Tutorial 2 UI",
+                ObjectType.Static, RenderType.Opaque);
+            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
+                new Vector3(0, 10, 1000));  //World
+            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial3");
+            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
+                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+
+            sceneManager.ActiveScene.Add(levelUI);
+
+            #endregion Tutorial 3 UI
         }
 
         private void InitializeLevelCompleteUI()
@@ -572,107 +775,6 @@ namespace GD.App
             #endregion
         }
 
-        private void InitializeUI()
-        {
-            #region UI Variables
-            GameObject uiGameObject = null;
-            Material2D material = null;
-            Texture2D texture = Content.Load<Texture2D>("Assets/Textures/Menu/Controls/progress_white");
-
-            var mainHUD = new Scene2D("game HUD");
-
-            #endregion UI Variables
-
-            #region Add UI Element
-
-            uiGameObject = new GameObject("progress bar - health - 1");
-            uiGameObject.Transform = new Transform(
-                new Vector3(1, 1, 0), //s
-                new Vector3(0, 0, 0), //r
-                new Vector3(_graphics.PreferredBackBufferWidth - texture.Width - 20,
-                20, 0)); //t
-
-
-
-            //add to scene2D
-            mainHUD.Add(uiGameObject);
-
-            #endregion
-
-            #region Add Scene to Manager and Set Active
-
-            //add scene2D to manager
-            uiManager.Add(mainHUD.ID, mainHUD);
-
-            //what ui do i see first?
-            uiManager.SetActiveScene(mainHUD.ID);
-
-            #endregion
-        }
-
-        private void InitializeTutorialUI()
-        {
-            #region Tutorial 0 UI
-
-            var levelUI = new GameObject("Tutorial 0 UI",
-                ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 5, 0));  //World
-            var texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial0");
-            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
-           
-            sceneManager.ActiveScene.Add(levelUI);
-
-            #endregion Tutorial 0 UI
-
-            #region Tutorial 1 UI
-
-            levelUI = new GameObject("Tutorial 1 UI",
-                ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 10, 15));  //World
-            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial1");
-            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
-
-            sceneManager.ActiveScene.Add(levelUI);
-
-            #endregion Tutorial 1 UI
-
-            #region Tutorial 2 UI
-
-            levelUI = new GameObject("Tutorial 2 UI",
-                ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 10, 225));  //World
-            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial2");
-            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
-
-            sceneManager.ActiveScene.Add(levelUI);
-
-            #endregion Tutorial 2 UI
-
-            #region Tutorial 3 UI
-
-            levelUI = new GameObject("Tutorial 2 UI",
-                ObjectType.Static, RenderType.Opaque);
-            levelUI.Transform = new Transform(new Vector3(29, 10, 1), null,
-                new Vector3(0, 10, 1000));  //World
-            texture = Content.Load<Texture2D>("Assets/Textures/Menu/Backgrounds/tutorial3");
-            levelUI.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
-
-            sceneManager.ActiveScene.Add(levelUI);
-
-            #endregion Tutorial 3 UI
-        }
-
         private void InitializeDistanceMeter()
         {
             //intialize the utility component
@@ -700,24 +802,17 @@ namespace GD.App
             perfUtility.DrawOrder = 3;
             Components.Add(perfUtility);
         }
-
-        private void LoadMediaAssets()
-        {
-            LoadSounds();
-        }
-
         private void LoadSounds()
         {
             #region Background Audio
 
-            object[] parameters = { "BGMusic" };
+            object[] parametersBG = { "BGMusic" };
             EventDispatcher.Raise(
                 new EventData(EventCategoryType.Player,
                 EventActionType.OnPlay,
-                parameters));
+                parametersBG));
 
             var sound = Content.Load<SoundEffect>("Assets/Audio/Non-Digetic/cigaro30__synthwave-beat");
-
             //Add the new sound for background
             soundManager.Add(new Cue(
                 "BGMusic",
@@ -730,8 +825,13 @@ namespace GD.App
 
             #region SoundEffects
 
-            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Spaceship Engine 2");
+            object[] parameters = { "Engine" };
+            EventDispatcher.Raise(
+                new EventData(EventCategoryType.Player,
+                EventActionType.OnPlay2D,
+                parameters));
 
+            var soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/Engine Hum");
             //Add the new sound for background
             soundManager.Add(new Cue(
                 "Engine",
@@ -739,6 +839,7 @@ namespace GD.App
                  SoundCategoryType.Alarm,
                  new Vector3(0.1f, 0, 0),
                  true));
+
 
             soundEffect = Content.Load<SoundEffect>("Assets/Audio/Diegetic/superphat__scifiheavyblastershot");
             //Add the new sound for background
@@ -760,153 +861,6 @@ namespace GD.App
 
             #endregion SoundEffects
 
-        }
-
-        private void InitializeScenes()
-        {
-            //initialize a scene
-            var scene = new Scene("level01");
-
-            //add scene to the scene manager
-            sceneManager.Add(scene.ID, scene);
-
-            //don't forget to set active scene
-            sceneManager.SetActiveScene("level01");
-        }
-
-        private void InitializeCurves()
-        {
-            //camera
-            GameObject cameraGameObject = null;
-
-            Curve3D curve3D = new Curve3D(CurveLoopType.Constant);
-            curve3D.Add(new Vector3(-12, 1, -100), 0);
-            curve3D.Add(new Vector3(12, 7.5f, -75), 3300);
-            curve3D.Add(new Vector3(-12, 7, -50), 6600);
-            curve3D.Add(new Vector3(0, 4.25F, 0), 9900);
-
-
-            cameraGameObject = new GameObject(AppData.CURVE_CAMERA_NAME);
-            cameraGameObject.Transform =
-                new Transform(null, new Vector3(0, 180, 0), null);
-            cameraGameObject.AddComponent(new Camera(
-                MathHelper.PiOver2 / 2,
-                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
-                0.1f, 3500,
-                  new Viewport(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight)));
-
-            //define what action the curve will apply to the target game object
-            var curveAction = (Curve3D curve, GameObject target, GameTime gameTime) =>
-            {
-                target.Transform.SetTranslation(curve.Evaluate(gameTime.TotalGameTime.TotalMilliseconds, 4));
-            };
-
-            cameraGameObject.AddComponent(new CurveBehaviour(curve3D, curveAction));
-
-            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
-
-
-            cameraManager.SetActiveCamera(AppData.CURVE_CAMERA_NAME);
-
-        }
-
-        private void InitializeCameras()
-        {
-            //camera
-            GameObject cameraGameObject = null;
-
-            #region Third Person
-
-            cameraGameObject = new GameObject(AppData.THIRD_PERSON_CAMERA_NAME);
-            cameraGameObject.Transform = new Transform(null, null, null);
-            cameraGameObject.AddComponent(new Camera(
-                AppData.FIRST_PERSON_HALF_FOV, //MathHelper.PiOver2 / 2,
-                (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
-                AppData.FIRST_PERSON_CAMERA_NCP, //0.1f,
-                AppData.FIRST_PERSON_CAMERA_FCP,
-                new Viewport(0, 0, _graphics.PreferredBackBufferWidth,
-                _graphics.PreferredBackBufferHeight))); // 3000
-
-            cameraGameObject.AddComponent(new ThirdPersonController());
-
-            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
-
-            cameraGameObject.AddComponent(new AudioListenerBehaviour());
-
-            //cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
-
-            #endregion
-
-            #region First Person
-
-            //camera 1
-            cameraGameObject = new GameObject(AppData.FIRST_PERSON_CAMERA_NAME);
-            cameraGameObject.Transform = new Transform(null, null,
-                AppData.FIRST_PERSON_DEFAULT_CAMERA_POSITION);
-
-            #region Camera - View & Projection
-
-            cameraGameObject.AddComponent(
-             new Camera(
-             AppData.FIRST_PERSON_HALF_FOV, //MathHelper.PiOver2 / 2,
-             (float)_graphics.PreferredBackBufferWidth / _graphics.PreferredBackBufferHeight,
-             AppData.FIRST_PERSON_CAMERA_NCP, //0.1f,
-             AppData.FIRST_PERSON_CAMERA_FCP,
-             new Viewport(0, 0, _graphics.PreferredBackBufferWidth,
-             _graphics.PreferredBackBufferHeight))); // 3000
-
-            #endregion
-
-            #region Collision - Add capsule
-
-            //adding a collidable surface that enables acceleration, jumping
-            var characterCollider = new CharacterCollider(cameraGameObject, true);
-
-            cameraGameObject.AddComponent(characterCollider);
-            characterCollider.AddPrimitive(new Capsule(
-                cameraGameObject.Transform.Translation,
-                Matrix.CreateRotationX(MathHelper.PiOver2),
-                1, 3.6f),
-                new MaterialProperties(0.2f, 0.8f, 0.7f));
-            characterCollider.Enable(cameraGameObject, false, 1);
-
-            #endregion
-
-            #region Collision - Add Controller for movement (now with collision)
-
-            cameraGameObject.AddComponent(new CollidableFirstPersonController(cameraGameObject,
-                characterCollider,
-                AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
-                AppData.PLAYER_ROTATE_SPEED_VECTOR2, AppData.FIRST_PERSON_CAMERA_SMOOTH_FACTOR, true,
-                AppData.PLAYER_COLLIDABLE_JUMP_HEIGHT));
-
-            #endregion
-
-            #region 3D Sound
-
-            //added ability for camera to listen to 3D sounds
-            cameraGameObject.AddComponent(new AudioListenerBehaviour());
-
-            #endregion
-
-            cameraManager.Add(cameraGameObject.Name, cameraGameObject);
-
-            #endregion First Person
-
-        }
-
-        private void InitializeCollidableContent(float worldScale)
-        {
-            InitializeCollidableGround(worldScale);
-            InitializeCollidableLevel01();
-            InitializeLevel01Obstacles();
-            InitializeFinishLineTrigger();
-        }
-
-        private void InitializeNonCollidableContent(float worldScale)
-        {
-            InitializeSkyBox(worldScale);
-            InitializeTutorialUI();
         }
 
         private void InitializeCollidableGround(float worldScale)
@@ -1368,7 +1322,6 @@ namespace GD.App
 
         }
 
-
         private void InitializeLevel01Obstacles()
         {
             #region obstacle1
@@ -1497,9 +1450,6 @@ namespace GD.App
             obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
             Collider obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
             obstacleCollider.AddPrimitive(
                 new Box(
@@ -1524,9 +1474,6 @@ namespace GD.App
                 ObjectType.Static, RenderType.Opaque);
             obstacleJump.Transform = new Transform(new Vector3(29, 2, 1), null,
                 new Vector3(0, 1, 1550));  //World
-            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
             obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
@@ -1557,9 +1504,6 @@ namespace GD.App
             obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
             obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
             obstacleCollider.AddPrimitive(
                 new Box(
@@ -1587,9 +1531,6 @@ namespace GD.App
             obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
 
-            obstacleJump.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
             obstacleCollider = new ObstacleCollider(obstacleJump, true, false);
             obstacleCollider.AddPrimitive(
                 new Box(
@@ -1606,7 +1547,7 @@ namespace GD.App
 
             sceneManager.ActiveScene.Add(obstacleJump);
 
-            #endregion jump obstacle4
+            #endregion jump obstamcle4
 
             #region obstacle5
 
@@ -1617,9 +1558,9 @@ namespace GD.App
             var obstacleLarge = new GameObject("obstacle large 1",
                 ObjectType.Static, RenderType.Opaque);
             obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
-                new Vector3(num1X, 3.5f, num1Z));  //World
+                new Vector3(num1X, 0.5f, num1Z));  //World
             obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+                new Material(texture, 1), new TetrahedronMesh(_graphics.GraphicsDevice)));
 
             obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
             obstacleCollider.AddPrimitive(
@@ -1646,9 +1587,9 @@ namespace GD.App
             obstacleLarge = new GameObject("obstacle large 2",
                 ObjectType.Static, RenderType.Opaque);
             obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
-                new Vector3(num2X, 3.5f, num2Z));  //World
+                new Vector3(num2X, 0.5f, num2Z));  //World
             obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+                new Material(texture, 1), new OctahedronMesh(_graphics.GraphicsDevice)));
 
             obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
             obstacleCollider.AddPrimitive(
@@ -1666,7 +1607,7 @@ namespace GD.App
 
             sceneManager.ActiveScene.Add(obstacleLarge);
 
-            #endregion obstacle5
+            #endregion obstacle6
 
             #region obstacle7
             int num3X = rnd.Next(0,5);
@@ -1675,9 +1616,9 @@ namespace GD.App
             obstacleLarge = new GameObject("obstacle large 3",
                 ObjectType.Static, RenderType.Opaque);
             obstacleLarge.Transform = new Transform(new Vector3(7, 7, 7), null,
-                new Vector3(num3X, 3.5f, num3Z));  //World
+                new Vector3(num3X, 0.5f, num3Z));  //World
             obstacleLarge.AddComponent(new Renderer(new GDBasicEffect(litEffect),
-                new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
+                new Material(texture, 1), new IcosahedronMesh(_graphics.GraphicsDevice)));
 
             obstacleCollider = new ObstacleCollider(obstacleLarge, true, false);
             obstacleCollider.AddPrimitive(
@@ -1706,7 +1647,7 @@ namespace GD.App
             var finishLine = new GameObject("finish line",
                 ObjectType.Static, RenderType.Opaque);
             finishLine.Transform = new Transform(new Vector3(29, 10, 10), null,
-                new Vector3(0, 5, 2520));  //World
+                new Vector3(0, 5, 2521));  //World
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/checkerpattern");
             finishLine.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
@@ -1739,9 +1680,6 @@ namespace GD.App
             var texture = Content.Load<Texture2D>("Assets/Textures/Level/pink");
             playerGameObject.AddComponent(new Renderer(new GDBasicEffect(litEffect),
                 new Material(texture, 1), new CubeMesh(_graphics.GraphicsDevice)));
-
-            //playerGameObject.AddComponent(new PlayerController(AppData.FIRST_PERSON_MOVE_SPEED, AppData.FIRST_PERSON_STRAFE_SPEED,
-            //    AppData.PLAYER_ROTATE_SPEED_VECTOR2, true));
 
             //set this as active player
             Application.Player = playerGameObject;
@@ -1834,9 +1772,6 @@ namespace GD.App
             //add game effects
             InitializeEffects();
 
-            //add dictionaries to store and access content
-            InitializeDictionaries();
-
             //add camera, scene manager
             InitializeManagers();
 
@@ -1850,24 +1785,6 @@ namespace GD.App
             InitializeCameras();
         }
 
-        private void InitializeGlobals()
-        {
-            //Globally shared commonly accessed variables
-            Application.Main = this;
-            Application.GraphicsDeviceManager = _graphics;
-            Application.GraphicsDevice = _graphics.GraphicsDevice;
-            Application.Content = Content;
-
-            //Add access to managers from anywhere in the code
-            Application.CameraManager = cameraManager;
-            Application.SceneManager = sceneManager;
-            Application.SoundManager = soundManager;
-            Application.PhysicsManager = physicsManager;
-
-            Application.UISceneManager = uiManager;
-            Application.MenuSceneManager = menuManager;
-        }
-
         private void InitializeInput()
         {
             //Globally accessible inputs
@@ -1879,30 +1796,17 @@ namespace GD.App
             Components.Add(Input.Gamepad);
         }
 
-        /// <summary>
-        /// Sets game window dimensions and shows/hides the mouse
-        /// </summary>
-        /// <param name="resolution"></param>
-        /// <param name="isMouseVisible"></param>
-        /// <param name="isCursorLocked"></param>
-        private void InitializeScreen(Vector2 resolution, bool isMouseVisible, bool isCursorLocked)
+        private void InitializeEffects()
         {
-            Screen screen = new Screen();
+            //only for skybox with lighting disabled
+            unlitEffect = new BasicEffect(_graphics.GraphicsDevice);
+            unlitEffect.TextureEnabled = true;
 
-            //set resolution
-            screen.Set(resolution, isMouseVisible, isCursorLocked);
-
-            //set global for re-use by other entities
-            Application.Screen = screen;
-
-            //set starting mouse position i.e. set mouse in centre at startup
-            Input.Mouse.Position = screen.ScreenCentre;
-
-            ////calling set property
-            //_graphics.PreferredBackBufferWidth = (int)resolution.X;
-            //_graphics.PreferredBackBufferHeight = (int)resolution.Y;
-            //IsMouseVisible = isMouseVisible;
-            //_graphics.ApplyChanges();
+            //all other drawn objects
+            litEffect = new BasicEffect(_graphics.GraphicsDevice);
+            litEffect.TextureEnabled = true;
+            litEffect.LightingEnabled = true;
+            litEffect.EnableDefaultLighting();
         }
 
         private void InitializeManagers()
@@ -1999,9 +1903,47 @@ namespace GD.App
             #endregion
         }
 
-        private void InitializeDictionaries()
+        private void InitializeGlobals()
         {
-            //TODO - add texture dictionary, soundeffect dictionary, model dictionary
+            //Globally shared commonly accessed variables
+            Application.Main = this;
+            Application.GraphicsDeviceManager = _graphics;
+            Application.GraphicsDevice = _graphics.GraphicsDevice;
+            Application.Content = Content;
+
+            //Add access to managers from anywhere in the code
+            Application.CameraManager = cameraManager;
+            Application.SceneManager = sceneManager;
+            Application.SoundManager = soundManager;
+            Application.PhysicsManager = physicsManager;
+            Application.UISceneManager = uiManager;
+            Application.MenuSceneManager = menuManager;
+        }
+
+        /// <summary>
+        /// Sets game window dimensions and shows/hides the mouse
+        /// </summary>
+        /// <param name="resolution"></param>
+        /// <param name="isMouseVisible"></param>
+        /// <param name="isCursorLocked"></param>
+        private void InitializeScreen(Vector2 resolution, bool isMouseVisible, bool isCursorLocked)
+        {
+            Screen screen = new Screen();
+
+            //set resolution
+            screen.Set(resolution, isMouseVisible, isCursorLocked);
+
+            //set global for re-use by other entities
+            Application.Screen = screen;
+
+            //set starting mouse position i.e. set mouse in centre at startup
+            Input.Mouse.Position = screen.ScreenCentre;
+
+            ////calling set property
+            //_graphics.PreferredBackBufferWidth = (int)resolution.X;
+            //_graphics.PreferredBackBufferHeight = (int)resolution.Y;
+            //IsMouseVisible = isMouseVisible;
+            //_graphics.ApplyChanges();
         }
 
         private void InitializeDebug(bool showCollisionSkins = true)
@@ -2065,6 +2007,9 @@ namespace GD.App
         {
             #region Menu On/Off with U/P
 
+            if (Input.Keys.IsPressed(Keys.Escape))
+                Exit();
+
             if (Input.Keys.WasJustPressed(Keys.P))
             {
                 EventDispatcher.Raise(new EventData(EventCategoryType.Menu,
@@ -2078,9 +2023,8 @@ namespace GD.App
 
             #endregion
 
-            #region Demo - Camera switching
+            #region Camera switching
             bool hasbeenPressed = false;
-
 
             if (Input.Keys.IsPressed(Keys.Space) && hasbeenPressed == false)
             {
@@ -2096,8 +2040,6 @@ namespace GD.App
                 hasbeenPressed = true;
             }
 
-
-
             else if (Input.Keys.IsPressed(Keys.F1))
                 cameraManager.SetActiveCamera(AppData.FIRST_PERSON_CAMERA_NAME);
             else if (Input.Keys.IsPressed(Keys.F2))
@@ -2107,10 +2049,9 @@ namespace GD.App
             else if (Input.Keys.IsPressed(Keys.F4))
                 cameraManager.SetActiveCamera(AppData.THIRD_PERSON_CAMERA_NAME);
 
+            #endregion Camera switching
 
-            #endregion Demo - Camera switching
-
-            #region Demo - Gamepad
+            #region Gamepad
 
             var thumbsL = Input.Gamepad.ThumbSticks(false);
             //   System.Diagnostics.Debug.WriteLine(thumbsL);
@@ -2120,39 +2061,14 @@ namespace GD.App
 
             //    System.Diagnostics.Debug.WriteLine($"A: {Input.Gamepad.IsPressed(Buttons.A)}");
 
-            #endregion Demo - Gamepad
+            #endregion Gamepad
 
             #region Demo - Raising events using GDEvent
 
-            if (Input.Keys.IsPressed(Keys.Up))
-            {
-                object[] parameters = { "Engine" };
-                EventDispatcher.Raise(
-                    new EventData(EventCategoryType.Player,
-                    EventActionType.OnPlay3D,
-                    parameters));
-
-            }
-
-            if (Input.Keys.IsReleased(Keys.Down))
-            {
-                object[] parameters = { "Engine" };
-                EventDispatcher.Raise(
-                    new EventData(EventCategoryType.Player,
-                    EventActionType.OnPause,
-                    parameters));
-
-            }
-
-
-            if (Input.Keys.WasJustPressed(Keys.E))
-                OnChanged.Invoke(this, null); //passing null for EventArgs but we'll make our own class MyEventArgs::EventArgs later
+            //if (Input.Keys.WasJustPressed(Keys.E))
+            //    OnChanged.Invoke(this, null); //passing null for EventArgs but we'll make our own class MyEventArgs::EventArgs later
 
             #endregion
-
-
-            if (Input.Keys.IsPressed(Keys.Escape))
-                Exit();
 
             //fixed a bug with components not getting Update called
             base.Update(gameTime);

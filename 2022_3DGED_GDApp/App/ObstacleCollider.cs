@@ -36,8 +36,11 @@ namespace GD.App
                 EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPlay2D, parameters));
 
 
-                object[] parameters2 = { "BGMusic" };
-                EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPause, parameters2));
+                object[] parametersBG = { "BGMusic" };
+                EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPause, parametersBG));
+
+                object[] parametersP = { "Engine" };
+                EventDispatcher.Raise(new EventData(EventCategoryType.Player, EventActionType.OnPause, parametersP));
                 EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnPause));
                 EventDispatcher.Raise(new EventData(EventCategoryType.Menu, EventActionType.OnEnterLevelFailedUI));
 

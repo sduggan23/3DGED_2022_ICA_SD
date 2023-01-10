@@ -1686,7 +1686,7 @@ namespace GD.App
 
             #region Collision - Add capsule
 
-            //adding a collidable surface that enables acceleration, jumping
+            //adding a collidable surface that enables acceleration, jumpings
             var characterCollider = new CharacterCollider(playerGameObject, true);
 
             playerGameObject.AddComponent(characterCollider);
